@@ -2,64 +2,89 @@
 
 namespace App\Http\Controllers;
 
+use App\Helper\ApiResponse;
 use App\Models\category;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $category = category::latest()->paginate(10);
+
+        if (empty($category)) {
+            return ApiResponse::error('No categories found', Response::HTTP_NOT_FOUND);
+        }
+
+        return ApiResponse::success($category);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image_url' => 'nullable|string|url',
+            'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        try {
+            $category = category::create($data);
+
+            return ApiResponse::success($category, 'Category created successfully', Response::HTTP_CREATED);
+
+        } catch (QueryException $e) {
+            return ApiResponse::error('Database error', Response::HTTP_INTERNAL_SERVER_ERROR);
+        } catch (\Exception $e) {
+            return ApiResponse::error('Something went wrong', Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(category $category)
+    public function show($id)
     {
-        //
+        $category = category::find($id);
+
+        if (empty($category)) {
+            return ApiResponse::error('Category not found', Response::HTTP_NOT_FOUND);
+        }
+
+        return ApiResponse::success($category);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(category $category)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, category $category)
     {
-        //
+        $data = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'image_url' => 'nullable|string|url',
+            'sort_order' => 'nullable|integer|min:0',
+            'is_active' => 'nullable|boolean',
+            'parent_id' => 'nullable|exists:categories,id',
+        ]);
+
+        if (empty($data)) {
+            return ApiResponse::error('No data provided', Response::HTTP_BAD_REQUEST);
+        }
+
+        $category->update($data);
+
+        return ApiResponse::success($category, 'Category updated successfully', Response::HTTP_OK);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(category $category)
+    public function destroy($id)
     {
-        //
+        $category = category::find($id);
+
+        if (empty($category)) {
+            return ApiResponse::error('Category not found', Response::HTTP_NOT_FOUND);
+        }
+
+        $category->delete();
+
+        return ApiResponse::success(null, 'Category deleted successfully', Response::HTTP_OK);
     }
 }

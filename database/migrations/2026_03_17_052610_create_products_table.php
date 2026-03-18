@@ -17,7 +17,7 @@ return new class extends Migration {
             $table->string('slug')->unique();
             $table->text('description');
 
-            $table->decimal('price', 10, 2);
+            $table->decimal('price', 15, 2);
 
             $table->string('image_url');
             $table->integer('stock')->default(0);

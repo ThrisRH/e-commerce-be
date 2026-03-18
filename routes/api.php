@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BrandController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CartItemController;
 use App\Http\Controllers\CategoryController;
@@ -14,3 +15,4 @@ Route::apiResource('carts', CartController::class);
 Route::apiResource('cart-items', CartItemController::class);
 Route::apiResource('orders', OrderController::class);
 Route::apiResource('order-items', OrderItemController::class);
+Route::apiResource('brands', BrandController::class);
