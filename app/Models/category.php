@@ -18,4 +18,9 @@ class category extends Model
         'is_active',
         'parent_id',
     ];
+
+    public function attributes()
+    {
+        return $this->hasMany(CategoryAttribute::class);
+    }
 }
