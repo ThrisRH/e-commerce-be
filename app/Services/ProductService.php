@@ -2,10 +2,11 @@
 
 namespace App\Services;
 
+use App\Actions\Product\SyncProductAttributes;
+use App\Actions\Product\UpdateProduct as ProductUpdateProduct;
 use App\Facades\AttributeValidatorFacade;
 use App\Helper\ApiResponse;
 use App\Http\Resources\ProductResource;
-use App\Models\CategoryAttribute;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -76,43 +77,10 @@ class ProductService
                 return ApiResponse::error('Product not found', Response::HTTP_NOT_FOUND);
             }
 
-            $attributes = $data['attributes'] ?? null;
+            app(ProductUpdateProduct::class)->handle($product, $data);
 
-            $product->update(array_filter([
-                'name' => $data['name'] ?? null,
-                'description' => $data['description'] ?? null,
-                'image_url' => $data['image_url'] ?? null,
-                'stock' => $data['stock'] ?? null,
-                'price' => $data['price'] ?? null,
-                'brand_id' => $data['brand_id'] ?? null,
-                'category_id' => $data['category_id'] ?? null,
-            ], fn ($value) => ! is_null($value)));
-
-            if (! is_null($attributes) || $attributes == []) {
-
-                $validAttributeIds = CategoryAttribute::where('category_id', $product->category_id)
-                    ->pluck('attribute_id')
-                    ->toArray();
-
-                $new = collect($attributes)->keyBy('attribute_id');
-                $newIds = $new->keys()->toArray();
-
-                $product->productAttributes()->whereNotIn('attribute_id', $newIds)->delete();
-
-                foreach ($new as $attrId => $attr) {
-
-                    if (! isset($attr['value'])) {
-                        return ApiResponse::error("Attribute $attrId must have value");
-                    }
-                    if (! in_array($attrId, $validAttributeIds)) {
-                        return ApiResponse::error("Attribute $attrId is not valid for this category");
-                    }
-
-                    $product->productAttributes()->updateOrCreate(
-                        ['attribute_id' => $attrId],
-                        ['value' => $attr['value']]
-                    );
-                }
+            if (array_key_exists('attributes', $data)) {
+                app(SyncProductAttributes::class)->handle($product, $data['attributes']);
             }
 
             return ApiResponse::success(new ProductResource($product), 'Product updated successfully');

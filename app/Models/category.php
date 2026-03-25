@@ -4,8 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
-class category extends Model
+class Category extends Model
 {
     use HasFactory;
 
@@ -19,8 +20,25 @@ class category extends Model
         'parent_id',
     ];
 
+    protected static function booted()
+    {
+        static::creating(function ($category) {
+            $category->slug = Str::slug($category->name);
+        });
+    }
+
     public function categoryAttributes()
     {
         return $this->hasMany(CategoryAttribute::class);
+    }
+
+    public function parentCategory()
+    {
+        return $this->belongsTo(Category::class, 'parent_id');
+    }
+
+    public function children()
+    {
+        return $this->hasMany(Category::class, 'parent_id');
     }
 }

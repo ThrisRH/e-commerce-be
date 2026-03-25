@@ -17,6 +17,15 @@ class CategoryResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'slug' => $this->slug,
+            'is_active' => $this->is_active,
+            'description' => $this->description,
+            'image_url' => $this->image_url,
+            'parent_category' => $this->parentCategory ? [
+                'id' => $this->parentCategory->id,
+                'name' => $this->parentCategory->name,
+                'slug' => $this->parentCategory->slug,
+            ] : null,
 
             'attributes' => $this->categoryAttributes->map(function ($item) {
                 return [
