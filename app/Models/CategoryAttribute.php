@@ -11,4 +11,9 @@ class CategoryAttribute extends Model
         'attribute_id',
         'is_required',
     ];
+
+    public function attribute()
+    {
+        return $this->belongsTo(Attribute::class);
+    }
 }

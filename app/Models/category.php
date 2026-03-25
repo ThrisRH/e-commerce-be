@@ -19,7 +19,7 @@ class category extends Model
         'parent_id',
     ];
 
-    public function attributes()
+    public function categoryAttributes()
     {
         return $this->hasMany(CategoryAttribute::class);
     }

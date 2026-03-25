@@ -2,20 +2,22 @@
 
 namespace App\Http\Controllers;
 
-use App\Facades\AttributeValidatorFacade;
-use App\Helper\ApiResponse;
 use App\Models\Product;
+use App\Services\ProductService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
-use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
+    protected $productService;
+
+    public function __construct(ProductService $productService)
+    {
+        $this->productService = $productService;
+    }
+
     public function index()
     {
-        $product = Product::latest()->paginate(10);
-
-        return ApiResponse::success($product);
+        return $this->productService->getAlls();
     }
 
     public function store(Request $request)
@@ -33,87 +35,37 @@ class ProductController extends Controller
             'attributes.*.value' => 'required',
         ]);
 
-        DB::transaction(function () use ($data, &$product) {
-            AttributeValidatorFacade::validate($data['category_id'], $data['attributes']);
-
-            $product = Product::create([
-                'name' => $data['name'],
-                'category_id' => $data['category_id'],
-                'description' => $data['description'],
-                'image_url' => $data['image_url'],
-                'stock' => $data['stock'],
-                'price' => $data['price'],
-                'brand_id' => $data['brand_id'],
-            ]);
-
-            foreach ($data['attributes'] as $attr) {
-                $product->attributes()->create([
-                    'attribute_id' => $attr['attribute_id'],
-                    'value' => $attr['value'],
-                ]);
-            }
-        });
-
-        return ApiResponse::success($product, 'Product created successfully', Response::HTTP_CREATED);
+        return $this->productService->create($data);
     }
 
     public function show($id)
     {
-        $product = Product::find($id);
-
-        if (empty($product)) {
-            return ApiResponse::error('Product not found', Response::HTTP_NOT_FOUND);
-        }
-
-        return ApiResponse::success($product);
+        return $this->productService->getById($id);
     }
 
     public function update(Request $request, Product $product)
     {
+        $isPut = $request->isMethod('put');
+
         $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'image_url' => 'sometimes|string|url',
-            'stock' => 'sometimes|integer|min:0',
-            'price' => 'sometimes|numeric|min:0',
-            'brand_id' => 'sometimes|exists:brands,id',
-            'category_id' => 'sometimes|exists:categories,id',
-            'is_active' => 'sometimes|boolean',
-            'attributes' => 'sometimes|array',
-            'attributes.*.attribute_id' => 'required|exists:attributes,id',
-            'attributes.*.value' => 'required',
+            'name' => ($isPut ? 'required' : 'sometimes').'|string|max:255',
+            'description' => ($isPut ? 'required' : 'sometimes').'|string',
+            'image_url' => ($isPut ? 'required' : 'sometimes').'|string|url',
+            'stock' => ($isPut ? 'required' : 'sometimes').'|integer|min:0',
+            'price' => ($isPut ? 'required' : 'sometimes').'|numeric|min:0',
+            'brand_id' => ($isPut ? 'required' : 'sometimes').'|exists:brands,id',
+            'category_id' => ($isPut ? 'required' : 'sometimes').'|exists:categories,id',
+
+            'attributes' => ($isPut ? 'required' : 'sometimes').'|array',
+            'attributes.*.attribute_id' => 'required_with:attributes|exists:attributes,id',
+            'attributes.*.value' => 'required_with:attributes',
         ]);
 
-        if (empty($data)) {
-            return ApiResponse::error('No data provided', Response::HTTP_BAD_REQUEST);
-        }
-
-        DB::transaction(function () use ($data, &$product) {
-            AttributeValidatorFacade::validate($data['category_id'], $data['attributes']);
-
-            $product->attributes()->delete();
-
-            foreach ($data['attributes'] as $attr) {
-                $product->attributes()->create([
-                    'attribute_id' => $attr['attribute_id'],
-                    'value' => $attr['value'],
-                ]);
-            }
-        });
-
-        return ApiResponse::success($product, 'Product updated successfully', Response::HTTP_OK);
+        return $this->productService->update($product->id, $data);
     }
 
     public function destroy($id)
     {
-        $product = Product::find($id);
-
-        if (empty($product)) {
-            return ApiResponse::error('Product not found', Response::HTTP_NOT_FOUND);
-        }
-
-        $product->delete();
-
-        return ApiResponse::success(null, 'Product deleted successfully', Response::HTTP_OK);
+        return $this->productService->delete($id);
     }
 }

@@ -4,21 +4,23 @@ namespace App\Http\Controllers;
 
 use App\Helper\ApiResponse;
 use App\Models\category;
+use App\Services\CategoryService;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
+    protected $categoryService;
+
+    public function __construct(CategoryService $categoryService)
+    {
+        $this->categoryService = $categoryService;
+    }
+
     public function index()
     {
-        $category = category::latest()->paginate(10);
-
-        if (empty($category)) {
-            return ApiResponse::error('No categories found', Response::HTTP_NOT_FOUND);
-        }
-
-        return ApiResponse::success($category);
+        return $this->categoryService->getAlls();
     }
 
     public function store(Request $request)
@@ -46,13 +48,7 @@ class CategoryController extends Controller
 
     public function show($id)
     {
-        $category = category::find($id);
-
-        if (empty($category)) {
-            return ApiResponse::error('Category not found', Response::HTTP_NOT_FOUND);
-        }
-
-        return ApiResponse::success($category);
+        return $this->categoryService->getById($id);
     }
 
     public function update(Request $request, category $category)
