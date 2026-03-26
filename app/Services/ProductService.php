@@ -5,7 +5,7 @@ namespace App\Services;
 use App\Actions\Product\SyncProductAttributes;
 use App\Actions\Product\UpdateProduct as ProductUpdateProduct;
 use App\Facades\AttributeValidatorFacade;
-use App\Helper\ApiResponse;
+use App\Ship\Helper\ApiResponse;
 use App\Http\Resources\ProductResource;
 use App\Models\Product;
 use Illuminate\Support\Facades\DB;

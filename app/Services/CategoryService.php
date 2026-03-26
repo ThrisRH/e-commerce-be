@@ -2,7 +2,7 @@
 
 namespace App\Services;
 
-use App\Helper\ApiResponse;
+use App\Ship\Helper\ApiResponse;
 use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use Symfony\Component\HttpFoundation\Response;
