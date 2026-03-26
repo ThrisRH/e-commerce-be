@@ -2,7 +2,7 @@
 
 namespace App\Containers\CatalogSection\Product\Actions;
 
-use App\Containers\AppSection\Product\Models\Product;
+use App\Containers\CatalogSection\Product\Models\Product;
 use App\Containers\CatalogSection\Category\Models\CategoryAttribute;
 use Exception;
 

@@ -2,7 +2,7 @@
 
 namespace App\Containers\CatalogSection\Product\Tasks;
 
-use App\Containers\AppSection\Product\Models\Product;
+use App\Containers\CatalogSection\Product\Models\Product;
 
 class UpdateProductTask
 {

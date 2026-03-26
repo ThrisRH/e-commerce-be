@@ -1,10 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
+use App\Containers\CatalogSection\Category\Actions\FindCategoryByIdAction;
+use App\Containers\CatalogSection\Category\Actions\GetAllCategoriesAction;
 use App\Containers\CatalogSection\Category\Models\Category;
+use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
 use App\Ship\Helper\ApiResponse;
-use App\Services\CategoryService;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
@@ -12,16 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
-    protected $categoryService;
-
-    public function __construct(CategoryService $categoryService)
+    public function index(GetAllCategoriesAction $action)
     {
-        $this->categoryService = $categoryService;
-    }
-
-    public function index()
-    {
-        return $this->categoryService->getAlls();
+        $categories = $action->run();
+        return ApiResponse::success((new CategoryTransformer)->collection($categories));
     }
 
     public function store(Request $request)
@@ -38,7 +34,7 @@ class CategoryController extends Controller
         try {
             $category = Category::create($data);
 
-            return ApiResponse::success($category, 'Category created successfully', Response::HTTP_CREATED);
+            return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category created successfully', Response::HTTP_CREATED);
 
         } catch (QueryException $e) {
             return ApiResponse::error('Database error', Response::HTTP_INTERNAL_SERVER_ERROR);
@@ -47,9 +43,10 @@ class CategoryController extends Controller
         }
     }
 
-    public function show($id)
+    public function show($id, FindCategoryByIdAction $action)
     {
-        return $this->categoryService->getById($id);
+        $category = $action->run($id);
+        return ApiResponse::success((new CategoryTransformer)->transform($category));
     }
 
     public function update(Request $request, Category $category)
@@ -69,7 +66,7 @@ class CategoryController extends Controller
 
         $category->update($data);
 
-        return ApiResponse::success($category, 'Category updated successfully', Response::HTTP_OK);
+        return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category updated successfully', Response::HTTP_OK);
     }
 
     public function destroy($id)

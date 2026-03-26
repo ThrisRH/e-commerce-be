@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Containers\AppSection\Product\Models;
+namespace App\Containers\CatalogSection\Product\Models;
 
-use App\Containers\AppSection\Product\Models\Product\ProductAttribute;
+use App\Containers\CatalogSection\Product\Models\ProductAttribute;
 use App\Containers\CatalogSection\Brand\Models\Brand;
 use App\Containers\CatalogSection\Category\Models\Category;
 use Illuminate\Database\Eloquent\Model;

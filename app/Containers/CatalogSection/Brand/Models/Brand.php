@@ -5,11 +5,10 @@ namespace App\Containers\CatalogSection\Brand\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
-class brand extends Model
+class Brand extends Model
 {
     protected $fillable = [
         'name',
-        'slug',
         'description',
     ];
 

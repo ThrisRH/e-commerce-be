@@ -1,5 +1,7 @@
 <?php
 
+use App\Ship\Exceptions\DuplicateSlugException;
+use App\Ship\Helper\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,5 +23,10 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->render(function (DuplicateSlugException $e, $request) {
+            return ApiResponse::error($e->getMessage(), 422, [
+                'field' => $e->field,
+                'value' => $e->value,
+            ]);
+        });
     })->create();

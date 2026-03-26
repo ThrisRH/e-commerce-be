@@ -1,9 +1,13 @@
 <?php
 
-namespace app\Containers\CatalogSection\Category\UI\API\Transformers;
+namespace App\Containers\CatalogSection\Category\UI\API\Transformers;
 
 class CategoryTransformer
 {
+    public function collection($categories)
+    {
+        return $categories->map(fn($category) => $this->transform($category));
+    }
     public function transform($category)
     {
         return [

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\AppSection\Product\Models\Product;
+namespace App\Containers\CatalogSection\Product\Models;
 
 use App\Containers\CatalogSection\Attribute\Models\Attribute;
 use Illuminate\Database\Eloquent\Model;

@@ -1,7 +1,5 @@
 <?php
 
-use App\Facades\AttributeFacade;
-
 return [
 
     /*
@@ -126,7 +124,7 @@ return [
     ],
 
     'aliases' => [
-        'AttributeService' => AttributeFacade::class,
+
     ],
 
 ];

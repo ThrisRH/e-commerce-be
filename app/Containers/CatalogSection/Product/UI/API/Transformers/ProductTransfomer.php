@@ -1,9 +1,13 @@
 <?php
 
-namespace app\Containers\CatalogSection\Product\UI\API\Transformers;
+namespace App\Containers\CatalogSection\Product\UI\API\Transformers;
 
 class ProductTransfomer
 {
+    public function collection($products)
+    {
+        return $products->map(fn($product) => $this->transform($product));
+    }
     public function transform($product)
     {
         return [

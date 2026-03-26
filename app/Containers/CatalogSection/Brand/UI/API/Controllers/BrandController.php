@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\CatalogSection\Brand\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Brand\Models\brand;
+use App\Containers\CatalogSection\Brand\Actions\CreateBrandAction;
+use App\Containers\CatalogSection\Brand\Actions\DeleteBrandAction;
+use App\Containers\CatalogSection\Brand\Actions\GetByBrandIdAction;
+use App\Containers\CatalogSection\Brand\Models\Brand;
+use App\Containers\CatalogSection\Brand\Tasks\GetAllBrandTask;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,41 +14,33 @@ use Symfony\Component\HttpFoundation\Response;
 
 class BrandController extends Controller
 {
-    public function index()
+    public function index(GetAllBrandTask $getAllTask)
     {
-        $brands = brand::latest()->paginate(10);
-
-        if (empty($brands)) {
-            return ApiResponse::error('No brands found', Response::HTTP_NOT_FOUND);
-        }
+        $brands = $getAllTask->run();
 
         return ApiResponse::success($brands);
     }
 
-    public function store(Request $request)
+    public function store(CreateBrandAction $action, Request $request)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
         ]);
 
-        $brand = brand::create($data);
+        $brand = $action->run($data);
 
         return ApiResponse::success($brand, 'Brand created successfully', Response::HTTP_CREATED);
     }
 
-    public function show($id)
+    public function show(GetByBrandIdAction $action, $id)
     {
-        $brand = brand::find($id);
-
-        if (empty($brand)) {
-            return ApiResponse::error('Brand not found', Response::HTTP_NOT_FOUND);
-        }
+        $brand = $action->run($id);
 
         return ApiResponse::success($brand);
     }
 
-    public function update(Request $request, brand $brand)
+    public function update(Request $request, Brand $brand)
     {
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -60,16 +56,10 @@ class BrandController extends Controller
         return ApiResponse::success($brand, 'Brand updated successfully', Response::HTTP_OK);
     }
 
-    public function destroy($id)
+    public function destroy(DeleteBrandAction $action, int $id)
     {
-        $brand = brand::find($id);
+        $action->run($id);
 
-        if (empty($brand)) {
-            return ApiResponse::error('Brand not found', Response::HTTP_NOT_FOUND);
-        }
-
-        $brand->delete();
-
-        return ApiResponse::success(null, 'Brand deleted successfully', Response::HTTP_OK);
+        return ApiResponse::success(null, 'Brand deleted successfully');
     }
 }

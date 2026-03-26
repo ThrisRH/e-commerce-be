@@ -1,30 +1,28 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 
-use App\Containers\AppSection\Product\Models\Product;
+use App\Containers\CatalogSection\Product\Actions\CreateProductAction;
+use App\Containers\CatalogSection\Product\Actions\DeleteProductAction;
+use App\Containers\CatalogSection\Product\Actions\FindProductByIdAction;
+use App\Containers\CatalogSection\Product\Actions\GetAllProductsAction;
 use App\Containers\CatalogSection\Product\Actions\UpdateProduct;
-use app\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
-use App\Services\ProductService;
+use App\Containers\CatalogSection\Product\Models\Product;
+use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    protected $productService;
-
-    public function __construct(ProductService $productService)
+    public function index(GetAllProductsAction $action)
     {
-        $this->productService = $productService;
+        $products = $action->run();
+        return ApiResponse::success((new ProductTransfomer)->collection($products));
     }
 
-    public function index()
-    {
-        return $this->productService->getAlls();
-    }
-
-    public function store(Request $request)
+    public function store(Request $request, CreateProductAction $action)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -39,15 +37,18 @@ class ProductController extends Controller
             'attributes.*.value' => 'required',
         ]);
 
-        return $this->productService->create($data);
+        $product = $action->run($data);
+
+        return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product created successfully', Response::HTTP_CREATED);
     }
 
-    public function show($id)
+    public function show($id, FindProductByIdAction $action)
     {
-        return $this->productService->getById($id);
+        $product = $action->run($id);
+        return ApiResponse::success(new ProductTransfomer()->transform($product));
     }
 
-    public function update(Request $request, Product $product)
+    public function update(Request $request, Product $product, UpdateProduct $action)
     {
         $isPut = $request->isMethod('put');
 
@@ -65,13 +66,14 @@ class ProductController extends Controller
             'attributes.*.value' => 'required_with:attributes',
         ]);
 
-        $product = app(UpdateProduct::class)->run($product, $data);
+        $product = $action->run($product, $data);
 
-        return ApiResponse::success(new ProductTransfomer()->transform($product));
+        return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteProductAction $action)
     {
-        return $this->productService->delete($id);
+        $action->run($id);
+        return ApiResponse::success(null, 'Product deleted successfully');
     }
 }

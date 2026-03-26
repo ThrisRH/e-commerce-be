@@ -1,25 +1,21 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\CatalogSection\Attribute\UI\API\Controllers;
 
+use App\Containers\CatalogSection\Attribute\Actions\CreateAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\GetAllAction;
 use App\Containers\CatalogSection\Attribute\Models\Attribute;
-use App\Services\AttributeService;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    protected $attributeService;
-
-    public function __construct(AttributeService $attributeService)
+    public function index(GetAllAction $getAllAction)
     {
-        $this->attributeService = $attributeService;
-    }
+        $attributes = $getAllAction->run();
 
-    public function index()
-    {
-        return ApiResponse::success($this->attributeService->getAll());
+        return ApiResponse::success($attributes);
     }
 
     public function create()
@@ -27,7 +23,7 @@ class AttributeController extends Controller
         //
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateAttributeAction $action)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:attributes,name',
@@ -38,7 +34,7 @@ class AttributeController extends Controller
         ]);
 
         try {
-            return ApiResponse::success($this->attributeService->create($data));
+            return ApiResponse::success($action->run($data));
         } catch (\Exception $e) {
             return ApiResponse::error($e->getMessage());
         }
