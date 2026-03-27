@@ -1,22 +1,26 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Category\Models\CategoryAttribute;
+use App\Containers\CatalogSection\Category\Actions\CreateCategoryAttributeAction;
+use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAttributeAction;
+use App\Containers\CatalogSection\Category\Actions\FindCategoryAttributeByIdAction;
+use App\Containers\CatalogSection\Category\Actions\GetAllCategoryAttributesAction;
+use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAttributeAction;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class CategoryAttributeController extends Controller
 {
-    public function index()
+    public function index(GetAllCategoryAttributesAction $action)
     {
-        $categoryAttributes = CategoryAttribute::latest()->paginate(10);
+        $categoryAttributes = $action->run();
 
         return ApiResponse::success($categoryAttributes);
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateCategoryAttributeAction $action)
     {
         $data = $request->validate([
             'category_id' => 'required|exists:categories,id',
@@ -24,19 +28,19 @@ class CategoryAttributeController extends Controller
             'is_required' => 'boolean',
         ]);
 
-        $categoryAttributes = CategoryAttribute::create($data);
+        $categoryAttributes = $action->run($data);
 
         return ApiResponse::success($categoryAttributes);
     }
 
-    public function show($id)
+    public function show($id, FindCategoryAttributeByIdAction $action)
     {
-        $categoryAttribute = CategoryAttribute::find($id);
+        $categoryAttribute = $action->run($id);
 
         return ApiResponse::success($categoryAttribute);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, UpdateCategoryAttributeAction $action)
     {
         $data = $request->validate([
             'category_id' => 'required|exists:categories,id',
@@ -44,26 +48,14 @@ class CategoryAttributeController extends Controller
             'is_required' => 'boolean',
         ]);
 
-        $categoryAttribute = CategoryAttribute::find($id);
-
-        if (! $categoryAttribute) {
-            return ApiResponse::error('Category attribute not found');
-        }
-
-        $categoryAttribute->update($data);
+        $categoryAttribute = $action->run($id, $data);
 
         return ApiResponse::success($categoryAttribute);
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteCategoryAttributeAction $action)
     {
-        $categoryAttribute = CategoryAttribute::find($id);
-
-        if (! $categoryAttribute) {
-            return ApiResponse::error('Category attribute not found');
-        }
-
-        $categoryAttribute->delete();
+        $categoryAttribute = $action->run($id);
 
         return ApiResponse::success($categoryAttribute);
     }

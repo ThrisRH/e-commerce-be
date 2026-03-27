@@ -1,14 +1,15 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Actions;
+namespace App\Containers\CatalogSection\Product\Tasks;
 
-use App\Containers\CatalogSection\Product\Models\Product;
 use App\Containers\CatalogSection\Category\Models\CategoryAttribute;
-use Exception;
+use App\Containers\CatalogSection\Product\Models\Product;
+use App\Ship\Parents\Tasks\Task;
+use Illuminate\Validation\ValidationException;
 
-class SyncProductAttributes
+class SyncProductAttributesTask extends Task
 {
-    public function handle(Product $product, array $attributes)
+    public function run(Product $product, array $attributes)
     {
         $validAttributeId = CategoryAttribute::where('category_id', $product->category_id)
             ->pluck('attribute_id')
@@ -23,11 +24,15 @@ class SyncProductAttributes
 
         foreach ($newAttributes as $attrId => $attr) {
             if (! isset($attr['value'])) {
-                throw new Exception("Attribute $attrId must have value");
+                throw ValidationException::withMessages([
+                    "attributes.$attrId" => 'Attribute value is required',
+                ]);
             }
 
             if (! in_array($attrId, $validAttributeId)) {
-                throw new Exception('Invalid attribute');
+                throw ValidationException::withMessages([
+                    "attributes.$attrId" => 'Invalid attribute',
+                ]);
             }
 
             $product->productAttributes()->updateOrCreate(

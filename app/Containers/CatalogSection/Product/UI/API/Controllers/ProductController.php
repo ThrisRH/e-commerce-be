@@ -19,6 +19,7 @@ class ProductController extends Controller
     public function index(GetAllProductsAction $action)
     {
         $products = $action->run();
+
         return ApiResponse::success((new ProductTransfomer)->collection($products));
     }
 
@@ -45,6 +46,7 @@ class ProductController extends Controller
     public function show($id, FindProductByIdAction $action)
     {
         $product = $action->run($id);
+
         return ApiResponse::success(new ProductTransfomer()->transform($product));
     }
 
@@ -74,6 +76,7 @@ class ProductController extends Controller
     public function destroy($id, DeleteProductAction $action)
     {
         $action->run($id);
+
         return ApiResponse::success(null, 'Product deleted successfully');
     }
 }

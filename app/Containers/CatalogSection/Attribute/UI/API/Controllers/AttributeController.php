@@ -3,8 +3,10 @@
 namespace App\Containers\CatalogSection\Attribute\UI\API\Controllers;
 
 use App\Containers\CatalogSection\Attribute\Actions\CreateAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\DeleteAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\FindAttributeByIdAction;
 use App\Containers\CatalogSection\Attribute\Actions\GetAllAction;
-use App\Containers\CatalogSection\Attribute\Models\Attribute;
+use App\Containers\CatalogSection\Attribute\Actions\UpdateAttributeAction;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -18,11 +20,6 @@ class AttributeController extends Controller
         return ApiResponse::success($attributes);
     }
 
-    public function create()
-    {
-        //
-    }
-
     public function store(Request $request, CreateAttributeAction $action)
     {
         $data = $request->validate([
@@ -33,25 +30,17 @@ class AttributeController extends Controller
             'is_required' => 'boolean',
         ]);
 
-        try {
-            return ApiResponse::success($action->run($data));
-        } catch (\Exception $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::success($action->run($data));
     }
 
-    public function show($id)
+    public function show($id, FindAttributeByIdAction $action)
     {
-        try {
-            $attribute = Attribute::findOrFail($id);
+        $attribute = $action->run($id);
 
-            return ApiResponse::success($attribute);
-        } catch (\Exception $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::success($attribute);
     }
 
-    public function update(Request $request, $id)
+    public function update(Request $request, $id, UpdateAttributeAction $action)
     {
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -60,25 +49,11 @@ class AttributeController extends Controller
             'is_required' => 'sometimes|boolean',
         ]);
 
-        try {
-            $attribute = Attribute::findOrFail($id);
-            $attribute->update($data);
-
-            return ApiResponse::success($attribute);
-        } catch (\Exception $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::success($action->run($id, $data));
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteAttributeAction $action)
     {
-        try {
-            $attribute = Attribute::findOrFail($id);
-            $attribute->delete();
-
-            return ApiResponse::success($attribute);
-        } catch (\Exception $e) {
-            return ApiResponse::error($e->getMessage());
-        }
+        return ApiResponse::success($action->run($id));
     }
 }

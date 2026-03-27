@@ -2,15 +2,15 @@
 
 namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
+use App\Containers\CatalogSection\Category\Actions\CreateCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAction;
 use App\Containers\CatalogSection\Category\Actions\FindCategoryByIdAction;
 use App\Containers\CatalogSection\Category\Actions\GetAllCategoriesAction;
-use App\Containers\CatalogSection\Category\Models\Category;
+use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAction;
 use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 
 class CategoryController extends Controller
 {
@@ -20,7 +20,7 @@ class CategoryController extends Controller
         return ApiResponse::success((new CategoryTransformer)->collection($categories));
     }
 
-    public function store(Request $request)
+    public function store(Request $request, CreateCategoryAction $action)
     {
         $data = $request->validate([
             'name' => 'required|string|max:255',
@@ -31,16 +31,9 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id',
         ]);
 
-        try {
-            $category = Category::create($data);
+        $category = $action->run($data);
 
-            return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category created successfully', Response::HTTP_CREATED);
-
-        } catch (QueryException $e) {
-            return ApiResponse::error('Database error', Response::HTTP_INTERNAL_SERVER_ERROR);
-        } catch (\Exception $e) {
-            return ApiResponse::error('Something went wrong', Response::HTTP_INTERNAL_SERVER_ERROR);
-        }
+        return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category created successfully');
     }
 
     public function show($id, FindCategoryByIdAction $action)
@@ -49,7 +42,7 @@ class CategoryController extends Controller
         return ApiResponse::success((new CategoryTransformer)->transform($category));
     }
 
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id, UpdateCategoryAction $action)
     {
         $data = $request->validate([
             'name' => 'sometimes|string|max:255',
@@ -60,25 +53,15 @@ class CategoryController extends Controller
             'parent_id' => 'nullable|exists:categories,id',
         ]);
 
-        if (empty($data)) {
-            return ApiResponse::error('No data provided', Response::HTTP_BAD_REQUEST);
-        }
+        $category = $action->run($id, $data);
 
-        $category->update($data);
-
-        return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category updated successfully', Response::HTTP_OK);
+        return ApiResponse::success((new CategoryTransformer)->transform($category), 'Category updated successfully');
     }
 
-    public function destroy($id)
+    public function destroy($id, DeleteCategoryAction $action)
     {
-        $category = Category::find($id);
+        $action->run($id);
 
-        if (empty($category)) {
-            return ApiResponse::error('Category not found', Response::HTTP_NOT_FOUND);
-        }
-
-        $category->delete();
-
-        return ApiResponse::success(null, 'Category deleted successfully', Response::HTTP_OK);
+        return ApiResponse::success(null, 'Category deleted successfully');
     }
 }
