@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\User;
+use App\Containers\AppSection\Authentication\Models\User;
 
 return [
 
@@ -38,6 +38,10 @@ return [
     */
 
     'guards' => [
+        'api' => [
+            'driver' => 'passport',
+            'provider' => 'users',
+        ],
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
