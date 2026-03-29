@@ -4,10 +4,8 @@ use App\Containers\CatalogSection\Attribute\UI\API\Controllers\AttributeControll
 use App\Containers\CatalogSection\Brand\UI\API\Controllers\BrandController;
 use App\Containers\CatalogSection\Category\UI\API\Controllers\CategoryAttributeController;
 use App\Containers\CatalogSection\Category\UI\API\Controllers\CategoryController;
-use App\Containers\CatalogSection\Product\UI\API\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::apiResource('products', ProductController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('brands', BrandController::class);
 Route::apiResource('attributes', AttributeController::class);
