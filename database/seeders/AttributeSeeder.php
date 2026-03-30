@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Attribute;
+use App\Containers\CatalogSection\Attribute\Models\Attribute;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
 

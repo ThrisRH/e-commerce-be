@@ -6,8 +6,7 @@ use App\Containers\CatalogSection\Product\Actions\CreateProductAction;
 use App\Containers\CatalogSection\Product\Actions\DeleteProductAction;
 use App\Containers\CatalogSection\Product\Actions\FindProductByIdAction;
 use App\Containers\CatalogSection\Product\Actions\GetAllProductsAction;
-use App\Containers\CatalogSection\Product\Actions\UpdateProduct;
-use App\Containers\CatalogSection\Product\Models\Product;
+use App\Containers\CatalogSection\Product\Actions\UpdateProductAction;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
@@ -50,8 +49,10 @@ class ProductController extends Controller
         return ApiResponse::success(new ProductTransfomer()->transform($product));
     }
 
-    public function update(Request $request, Product $product, UpdateProduct $action)
+    public function update(Request $request, UpdateProductAction $updateAction, FindProductByIdAction $findAction)
     {
+        $product = $findAction->run($request['id']);
+
         $isPut = $request->isMethod('put');
 
         $data = $request->validate([
@@ -68,7 +69,11 @@ class ProductController extends Controller
             'attributes.*.value' => 'required_with:attributes',
         ]);
 
-        $product = $action->run($product, $data);
+        if (empty($data)) {
+            return ApiResponse::error('No data provided', Response::HTTP_BAD_REQUEST);
+        }
+
+        $product = $updateAction->run($product, $data);
 
         return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product updated successfully');
     }

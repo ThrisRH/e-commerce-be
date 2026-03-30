@@ -19,12 +19,13 @@ class Handler extends ExceptionHandler
             return ApiResponse::error('Validation failed', 422, $e->errors());
         }
 
-        if ($e instanceof NotFoundHttpException) {
+        if ($e instanceof NotFoundHttpException || $e instanceof \Illuminate\Database\Eloquent\ModelNotFoundException) {
             return ApiResponse::error(
                 $e->getMessage() ?: 'Resource not found',
                 404
             );
         }
+
 
         if ($e instanceof UnauthorizedHttpException) {
             return ApiResponse::error('Unauthorized', 401);

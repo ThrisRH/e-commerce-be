@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\UserRole;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,7 +20,6 @@ return new class extends Migration
                 ->unique()
                 ->nullable();
 
-            $table->string('role')->default(UserRole::Customer->value);
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true);
 

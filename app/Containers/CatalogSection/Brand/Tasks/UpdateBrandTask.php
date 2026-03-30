@@ -9,14 +9,12 @@ class UpdateBrandTask extends Task
 {
     public function run(Brand $brand, array $data)
     {
-        $changed = array_filter($data, fn ($value, $key) => $brand->key !== $value, ARRAY_FILTER_USE_BOTH);
+        $changed = array_filter($data, fn ($value, $key) => $value !== $brand->$key, ARRAY_FILTER_USE_BOTH);
 
         if (empty($changed)) {
             return $brand;
         }
 
         $brand->update($changed);
-
-        return $brand;
     }
 }

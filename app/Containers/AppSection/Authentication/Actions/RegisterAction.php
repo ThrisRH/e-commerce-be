@@ -3,20 +3,22 @@
 namespace App\Containers\AppSection\Authentication\Actions;
 
 use App\Containers\AppSection\Authentication\Tasks\CreateUserTask;
-use App\Containers\AppSection\Authentication\Tasks\GenerateTokenTask;
+use App\Containers\AppSection\Authorization\Tasks\AssignRoleTask;
 use App\Ship\Parents\Actions\Action;
+use Illuminate\Support\Facades\DB;
 
 class RegisterAction extends Action
 {
     public function run(array $data)
     {
-        $user = app(CreateUserTask::class)->run($data);
+        DB::transaction(function () use ($data) {
+            $user = app(CreateUserTask::class)->run($data);
 
-        $token = app(GenerateTokenTask::class)->run($user);
+            app(AssignRoleTask::class)->run($user, 'n-customer');
 
-        return [
-            'user' => $data,
-            'token' => $token,
-        ];
+            return [
+                'user' => $data,
+            ];
+        });
     }
 }

@@ -2,9 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Models\Brand;
-use App\Models\category;
-use App\Models\Product;
+use App\Containers\CatalogSection\Brand\Models\Brand;
+use App\Containers\CatalogSection\Category\Models\Category;
+use App\Containers\CatalogSection\Product\Models\Product;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Str;
@@ -16,7 +16,7 @@ class ProductSeeder extends Seeder
     public function run(): void
     {
         $brands = Brand::all()->pluck('id', 'name');
-        $categories = category::all()->pluck('id', 'name');
+        $categories = Category::all()->pluck('id', 'name');
 
         $products = [
             // Laptops

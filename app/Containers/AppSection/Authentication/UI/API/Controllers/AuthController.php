@@ -5,6 +5,8 @@ namespace App\Containers\AppSection\Authentication\UI\API\Controllers;
 use App\Containers\AppSection\Authentication\Actions\LoginAction;
 use App\Containers\AppSection\Authentication\Actions\LogoutAction;
 use App\Containers\AppSection\Authentication\Actions\RegisterAction;
+use App\Containers\AppSection\Authentication\UI\API\Transfomers\AuthTransfomer;
+use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -18,7 +20,12 @@ class AuthController extends Controller
             'password' => 'required|max:255',
         ]);
 
-        return app(LoginAction::class)->run($data);
+        $result = app(LoginAction::class)->run($data);
+
+        return ApiResponse::success([
+            'user' => app(AuthTransfomer::class)->transform($result['user']),
+            'token' => $result['token'],
+        ]);
     }
 
     // public function logout()
