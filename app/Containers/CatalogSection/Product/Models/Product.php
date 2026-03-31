@@ -2,11 +2,12 @@
 
 namespace App\Containers\CatalogSection\Product\Models;
 
-use App\Containers\CatalogSection\Product\Models\ProductAttribute;
 use App\Containers\CatalogSection\Brand\Models\Brand;
 use App\Containers\CatalogSection\Category\Models\Category;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+
+use function Illuminate\Support\now;
 
 class Product extends Model
 {
@@ -46,5 +47,10 @@ class Product extends Model
     public function productAttributes()
     {
         return $this->hasMany(ProductAttribute::class);
+    }
+
+    public function getIsNewAttribute()
+    {
+        return $this->created_at >= now()->subDays(30);
     }
 }

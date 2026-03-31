@@ -6,6 +6,7 @@ use App\Containers\CatalogSection\Product\UI\API\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('api/v1/products', [ProductController::class, 'index']);
+Route::get('api/v1/products/by-cate', [ProductController::class, 'showByCate']);
 Route::get('api/v1/products/{id}', [ProductController::class, 'show']);
 Route::post('api/v1/products', [ProductController::class, 'store']);
 Route::match(['put', 'patch'], 'api/v1/products/{id}', [ProductController::class, 'update']);

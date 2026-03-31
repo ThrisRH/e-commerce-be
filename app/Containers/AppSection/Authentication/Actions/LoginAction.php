@@ -16,8 +16,8 @@ class LoginAction extends Action
 
         $user = Auth::user();
 
-        $token = app(GenerateTokenTask::class)->run($user);
+        $access_token = app(GenerateTokenTask::class)->run($user);
 
-        return compact('user', 'token');
+        return compact('user', 'access_token');
     }
 }

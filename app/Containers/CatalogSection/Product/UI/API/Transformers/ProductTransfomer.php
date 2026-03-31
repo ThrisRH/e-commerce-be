@@ -6,8 +6,9 @@ class ProductTransfomer
 {
     public function collection($products)
     {
-        return $products->map(fn($product) => $this->transform($product));
+        return $products->map(fn ($product) => $this->transform($product));
     }
+
     public function transform($product)
     {
         return [
@@ -18,6 +19,7 @@ class ProductTransfomer
             'image_url' => $product->image_url,
             'stock' => $product->stock,
             'price' => $product->price,
+            'is_new' => $product->is_new,
 
             'is_active' => $product->is_active,
 

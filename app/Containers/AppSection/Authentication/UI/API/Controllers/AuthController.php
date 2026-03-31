@@ -15,7 +15,6 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'password' => 'required|max:255',
         ]);
@@ -24,7 +23,7 @@ class AuthController extends Controller
 
         return ApiResponse::success([
             'user' => app(AuthTransfomer::class)->transform($result['user']),
-            'token' => $result['token'],
+            'access_token' => $result['access_token'],
         ]);
     }
 

@@ -5,6 +5,7 @@ namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 use App\Containers\CatalogSection\Product\Actions\CreateProductAction;
 use App\Containers\CatalogSection\Product\Actions\DeleteProductAction;
 use App\Containers\CatalogSection\Product\Actions\FindProductByIdAction;
+use App\Containers\CatalogSection\Product\Actions\GetAllByCateAction;
 use App\Containers\CatalogSection\Product\Actions\GetAllProductsAction;
 use App\Containers\CatalogSection\Product\Actions\UpdateProductAction;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
@@ -47,6 +48,16 @@ class ProductController extends Controller
         $product = $action->run($id);
 
         return ApiResponse::success(new ProductTransfomer()->transform($product));
+    }
+
+    public function showByCate(Request $request, GetAllByCateAction $action)
+    {
+        $cate_id = $request->query('id');
+        $number = $request->query('number');
+
+        $products = $action->run($cate_id, $number ?? null);
+
+        return ApiResponse::success(new ProductTransfomer()->collection($products));
     }
 
     public function update(Request $request, UpdateProductAction $updateAction, FindProductByIdAction $findAction)
