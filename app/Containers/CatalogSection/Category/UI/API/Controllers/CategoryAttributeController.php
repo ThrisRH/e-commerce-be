@@ -24,7 +24,8 @@ class CategoryAttributeController extends Controller
     {
         $data = $request->validate([
             'category_id' => 'required|exists:categories,id',
-            'attribute_id' => 'required|exists:attributes,id',
+            'attribute_ids' => 'required|array',
+            'attribute_ids.*' => 'exists:attributes,id',
             'is_required' => 'boolean',
         ]);
 

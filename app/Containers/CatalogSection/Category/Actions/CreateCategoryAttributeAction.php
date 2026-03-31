@@ -11,6 +11,18 @@ class CreateCategoryAttributeAction extends Action
 
     public function run(array $data)
     {
-        return $this->task->run($data);
+        $category_id = $data['category_id'];
+        $attribute_ids = $data['attribute_ids'];
+        $is_required = $data['is_required'];
+
+        foreach ($attribute_ids as $attribute_id) {
+            $this->task->run([
+                'category_id' => $category_id,
+                'attribute_id' => $attribute_id,
+                'is_required' => $is_required,
+            ]);
+        }
+
+        return true;
     }
 }

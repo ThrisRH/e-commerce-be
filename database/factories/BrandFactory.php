@@ -2,12 +2,12 @@
 
 namespace Database\Factories;
 
-use App\Models\brand;
+use App\Containers\CatalogSection\Brand\Models\Brand;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class BrandFactory extends Factory
 {
-    protected $model = brand::class;
+    protected $model = Brand::class;
 
     public function definition(): array
     {

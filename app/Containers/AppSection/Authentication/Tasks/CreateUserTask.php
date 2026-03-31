@@ -13,6 +13,7 @@ class CreateUserTask extends Task
             'name' => $data['name'],
             'email' => $data['email'],
             'password' => $data['password'],
+            'phone_number' => $data['phone_number'],
         ]);
     }
 }

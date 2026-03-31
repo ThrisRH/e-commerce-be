@@ -4,6 +4,7 @@ namespace App\Containers\AppSection\Authentication\UI\API\Controllers;
 
 use App\Containers\AppSection\Authentication\Actions\LoginAction;
 use App\Containers\AppSection\Authentication\Actions\LogoutAction;
+use App\Containers\AppSection\Authentication\Actions\MeAction;
 use App\Containers\AppSection\Authentication\Actions\RegisterAction;
 use App\Containers\AppSection\Authentication\UI\API\Transfomers\AuthTransfomer;
 use App\Ship\Helper\ApiResponse;
@@ -27,6 +28,13 @@ class AuthController extends Controller
         ]);
     }
 
+    public function me(MeAction $action)
+    {
+        $user = $action->run();
+
+        return ApiResponse::success(app(AuthTransfomer::class)->transform($user));
+    }
+
     // public function logout()
     // {
     //     app(LogoutAction::class)->run();
@@ -39,6 +47,7 @@ class AuthController extends Controller
         $data = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email|max:255',
+            'phone_number' => 'required|string|max:12',
             'password' => 'required|min:6|max:255',
         ]);
 
