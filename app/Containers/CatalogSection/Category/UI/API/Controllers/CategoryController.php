@@ -17,6 +17,7 @@ class CategoryController extends Controller
     public function index(GetAllCategoriesAction $action)
     {
         $categories = $action->run();
+
         return ApiResponse::success((new CategoryTransformer)->collection($categories));
     }
 
@@ -29,6 +30,9 @@ class CategoryController extends Controller
             'sort_order' => 'nullable|integer|min:0',
             'is_active' => 'nullable|boolean',
             'parent_id' => 'nullable|exists:categories,id',
+            'attribute_ids' => 'nullable|array',
+            'attribute_ids.*' => 'exists:attributes,id',
+            'is_required' => 'boolean',
         ]);
 
         $category = $action->run($data);
@@ -39,6 +43,7 @@ class CategoryController extends Controller
     public function show($id, FindCategoryByIdAction $action)
     {
         $category = $action->run($id);
+
         return ApiResponse::success((new CategoryTransformer)->transform($category));
     }
 
