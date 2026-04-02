@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 
-use App\Models\order;
+use App\Containers\OrderSection\Order\Actions\Orders\CreateOrderAction;
+use App\Containers\OrderSection\Order\Actions\Orders\GetAllOrderAction;
+use App\Containers\OrderSection\Order\Models\Order;
+use App\Containers\OrderSection\Order\UI\API\Transformer\OrderTransformer;
+use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -13,29 +17,44 @@ class OrderController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $orders = app(GetAllOrderAction::class)->run();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        return ApiResponse::success(new OrderTransformer()->collection($orders));
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, CreateOrderAction $action)
     {
-        //
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'total_amount' => 'required|numeric',
+            'shipping_fee' => 'required|numeric',
+            'status' => 'required|string',
+            'shipping_name' => 'required|string',
+            'shipping_phone' => 'required|string',
+            'shipping_address' => 'required|string',
+            'payment_method' => 'required|string',
+            'payment_status' => 'required|string',
+            'transaction_id' => 'nullable|string',
+            'note' => 'nullable|string',
+            'items' => 'required|array',
+            'items.*.product_id' => 'required|exists:products,id',
+            'items.*.quantity' => 'required|integer',
+            'items.*.price' => 'required|numeric',
+        ]);
+
+        $order = $action->run($data);
+
+        return ApiResponse::success(new OrderTransformer()->transform($order->load('orderItems')));
+
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(order $order)
+    public function show(Order $order)
     {
         //
     }
@@ -43,7 +62,7 @@ class OrderController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(order $order)
+    public function edit(Order $order)
     {
         //
     }
@@ -51,7 +70,7 @@ class OrderController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, order $order)
+    public function update(Request $request, Order $order)
     {
         //
     }
@@ -59,7 +78,7 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(order $order)
+    public function destroy(Order $order)
     {
         //
     }

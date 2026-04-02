@@ -21,12 +21,21 @@ return new class extends Migration
                 ->nullOnDelete();
 
             $table->decimal('total_amount', 10, 2);
+            $table->decimal('shipping_fee', 10, 2)->default(0);
 
             $table->string('status')->default(OrderStatus::Pending->value);
 
             $table->string('shipping_name');
             $table->string('shipping_phone');
             $table->text('shipping_address');
+
+            $table->string('payment_method')->nullable();
+            $table->string('payment_status')->default('pending');
+            $table->string('transaction_id')->nullable();
+
+            $table->text('note')->nullable();
+
+            $table->softDeletes();
 
             $table->timestamps();
         });
