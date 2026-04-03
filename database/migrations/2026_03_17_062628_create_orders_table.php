@@ -1,6 +1,7 @@
 <?php
 
 use App\Ship\Enums\OrderStatus;
+use App\Ship\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -29,8 +30,8 @@ return new class extends Migration
             $table->string('shipping_phone');
             $table->text('shipping_address');
 
-            $table->string('payment_method')->nullable();
-            $table->string('payment_status')->default('pending');
+            $table->string('payment_method')->nullable()->default('COD');
+            $table->string('payment_status')->default(PaymentStatus::Pending->value);
             $table->string('transaction_id')->nullable();
 
             $table->text('note')->nullable();

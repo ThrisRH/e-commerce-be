@@ -28,21 +28,14 @@ class OrderController extends Controller
     public function store(Request $request, CreateOrderAction $action)
     {
         $data = $request->validate([
-            'user_id' => 'required|exists:users,id',
-            'total_amount' => 'required|numeric',
-            'shipping_fee' => 'required|numeric',
-            'status' => 'required|string',
+            'user_id' => 'nullable|exists:users,id',
             'shipping_name' => 'required|string',
             'shipping_phone' => 'required|string',
             'shipping_address' => 'required|string',
-            'payment_method' => 'required|string',
-            'payment_status' => 'required|string',
-            'transaction_id' => 'nullable|string',
             'note' => 'nullable|string',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer',
-            'items.*.price' => 'required|numeric',
         ]);
 
         $order = $action->run($data);
