@@ -9,8 +9,8 @@ class GetCateSectionAction extends Action
 {
     public function run()
     {
-        $cateIds = [1, 2, 3];
+        // $cateIds = [1, 2, 3];
 
-        return app(GetCateSectionTask::class)->run($cateIds);
+        return app(GetCateSectionTask::class)->run();
     }
 }
