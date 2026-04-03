@@ -6,8 +6,9 @@ class CategoryTransformer
 {
     public function collection($categories)
     {
-        return $categories->map(fn($category) => $this->transform($category));
+        return $categories->map(fn ($category) => $this->transform($category));
     }
+
     public function transform($category)
     {
         return [
@@ -27,6 +28,16 @@ class CategoryTransformer
                 return [
                     'id' => $item->attribute->id,
                     'name' => $item->attribute->name,
+                ];
+            }),
+
+            'products' => $category->products->map(function ($product) {
+                return [
+                    'id' => $product->id,
+                    'name' => $product->name,
+                    'slug' => $product->slug,
+                    'price' => $product->price,
+                    'image_url' => $product->image_url,
                 ];
             }),
         ];

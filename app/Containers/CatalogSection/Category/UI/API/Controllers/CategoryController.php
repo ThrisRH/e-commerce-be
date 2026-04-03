@@ -49,14 +49,21 @@ class CategoryController extends Controller
 
     public function update(Request $request, $id, UpdateCategoryAction $action)
     {
-        $data = $request->validate([
-            'name' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
-            'image_url' => 'nullable|string|url',
-            'sort_order' => 'nullable|integer|min:0',
-            'is_active' => 'nullable|boolean',
-            'parent_id' => 'nullable|exists:categories,id',
-        ]);
+        $isPatch = $request->isMethod('PATCH');
+
+        $rules = [
+            'name'          => ($isPatch ? 'sometimes|' : 'required|') . 'string|max:255',
+            'description'   => ($isPatch ? 'sometimes|' : 'required|') . 'string',
+            'image_url'     => 'nullable|string|url',
+            'sort_order'    => 'sometimes|integer|min:0',
+            'is_active'     => 'sometimes|boolean',
+            'parent_id'     => 'nullable|exists:categories,id',
+            'attribute_ids' => 'sometimes|array',
+            'attribute_ids.*' => 'exists:attributes,id',
+            'is_required'   => 'sometimes|boolean',
+        ];
+
+        $data = $request->validate($rules);
 
         $category = $action->run($id, $data);
 
