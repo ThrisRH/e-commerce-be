@@ -5,9 +5,11 @@ namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 use App\Containers\CatalogSection\Category\Actions\CreateCategoryAction;
 use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAction;
 use App\Containers\CatalogSection\Category\Actions\FindCategoryByIdAction;
+use App\Containers\CatalogSection\Category\Actions\FindProductByCateAction;
 use App\Containers\CatalogSection\Category\Actions\GetAllCategoriesAction;
 use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAction;
 use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
+use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -47,20 +49,27 @@ class CategoryController extends Controller
         return ApiResponse::success((new CategoryTransformer)->transform($category));
     }
 
+    public function showByCateId($id, FindProductByCateAction $action)
+    {
+        $products = $action->run($id);
+
+        return ApiResponse::success((new ProductTransfomer)->collection($products));
+    }
+
     public function update(Request $request, $id, UpdateCategoryAction $action)
     {
         $isPatch = $request->isMethod('PATCH');
 
         $rules = [
-            'name'          => ($isPatch ? 'sometimes|' : 'required|') . 'string|max:255',
-            'description'   => ($isPatch ? 'sometimes|' : 'required|') . 'string',
-            'image_url'     => 'nullable|string|url',
-            'sort_order'    => 'sometimes|integer|min:0',
-            'is_active'     => 'sometimes|boolean',
-            'parent_id'     => 'nullable|exists:categories,id',
+            'name' => ($isPatch ? 'sometimes|' : 'required|').'string|max:255',
+            'description' => ($isPatch ? 'sometimes|' : 'required|').'string',
+            'image_url' => 'nullable|string|url',
+            'sort_order' => 'sometimes|integer|min:0',
+            'is_active' => 'sometimes|boolean',
+            'parent_id' => 'nullable|exists:categories,id',
             'attribute_ids' => 'sometimes|array',
             'attribute_ids.*' => 'exists:attributes,id',
-            'is_required'   => 'sometimes|boolean',
+            'is_required' => 'sometimes|boolean',
         ];
 
         $data = $request->validate($rules);
