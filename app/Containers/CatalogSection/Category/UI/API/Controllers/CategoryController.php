@@ -2,12 +2,12 @@
 
 namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Category\Actions\CreateCategoryAction;
-use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAction;
-use App\Containers\CatalogSection\Category\Actions\FindCategoryByIdAction;
-use App\Containers\CatalogSection\Category\Actions\FindProductByCateAction;
-use App\Containers\CatalogSection\Category\Actions\GetAllCategoriesAction;
-use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\CreateCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\DeleteCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindCategoryByIdAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindProductByCateAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\GetAllCategoriesAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\UpdateCategoryAction;
 use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;

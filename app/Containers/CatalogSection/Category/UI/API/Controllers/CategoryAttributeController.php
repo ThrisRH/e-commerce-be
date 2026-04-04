@@ -2,11 +2,11 @@
 
 namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Category\Actions\CreateCategoryAttributeAction;
-use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAttributeAction;
-use App\Containers\CatalogSection\Category\Actions\FindCategoryAttributeByIdAction;
-use App\Containers\CatalogSection\Category\Actions\GetAllCategoryAttributesAction;
-use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAttributeAction;
+use App\Containers\CatalogSection\Category\Actions\CategoryAttributes\CreateCategoryAttributeAction;
+use App\Containers\CatalogSection\Category\Actions\CategoryAttributes\DeleteCategoryAttributeAction;
+use App\Containers\CatalogSection\Category\Actions\CategoryAttributes\FindCategoryAttributeByIdAction;
+use App\Containers\CatalogSection\Category\Actions\CategoryAttributes\GetAllCategoryAttributesAction;
+use App\Containers\CatalogSection\Category\Actions\CategoryAttributes\UpdateCategoryAttributeAction;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;

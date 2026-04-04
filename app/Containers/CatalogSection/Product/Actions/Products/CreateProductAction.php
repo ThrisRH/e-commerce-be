@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Actions;
+namespace App\Containers\CatalogSection\Product\Actions\Products;
 
 use App\Containers\CatalogSection\Category\Tasks\CategoryAttributes\ValidateCategoryAttributesTask;
 use App\Containers\CatalogSection\Product\Tasks\Products\CreateProductTask;
@@ -9,17 +9,10 @@ use Illuminate\Support\Facades\DB;
 
 class CreateProductAction extends Action
 {
-    private $validateCategoryAttributesTask;
-
-    private $createProductTask;
-
     public function __construct(
-        ValidateCategoryAttributesTask $validateCategoryAttributesTask,
-        CreateProductTask $createProductTask
-    ) {
-        $this->validateCategoryAttributesTask = $validateCategoryAttributesTask;
-        $this->createProductTask = $createProductTask;
-    }
+        private ValidateCategoryAttributesTask $validateCategoryAttributesTask,
+        private CreateProductTask $createProductTask
+    ) {}
 
     public function run(array $data)
     {
