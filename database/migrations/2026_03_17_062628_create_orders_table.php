@@ -1,6 +1,7 @@
 <?php
 
 use App\Ship\Enums\OrderStatus;
+use App\Ship\Enums\PaymentMethod;
 use App\Ship\Enums\PaymentStatus;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -21,6 +22,8 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
+            $table->string('tracking_code')->unique();
+
             $table->decimal('total_amount', 10, 2);
             $table->decimal('shipping_fee', 10, 2)->default(0);
 
@@ -30,7 +33,7 @@ return new class extends Migration
             $table->string('shipping_phone');
             $table->text('shipping_address');
 
-            $table->string('payment_method')->nullable()->default('COD');
+            $table->string('payment_method')->default(PaymentMethod::COD->value);
             $table->string('payment_status')->default(PaymentStatus::Pending->value);
             $table->string('transaction_id')->nullable();
 

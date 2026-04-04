@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Tasks\Products;
+namespace App\Containers\CatalogSection\Product\Tasks;
 
 use App\Containers\CatalogSection\Product\Models\Product;
 use App\Ship\Parents\Tasks\Task;

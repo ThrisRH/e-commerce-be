@@ -4,7 +4,6 @@ namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 
 use App\Containers\OrderSection\Order\Actions\Orders\CreateOrderAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetAllOrderAction;
-use App\Containers\OrderSection\Order\Models\Order;
 use App\Containers\OrderSection\Order\UI\API\Transformer\OrderTransformer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
@@ -15,11 +14,17 @@ class OrderController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $orders = app(GetAllOrderAction::class)->run();
+        $orders = app(GetAllOrderAction::class)->run($request->limit ?? 10);
 
-        return ApiResponse::success(new OrderTransformer()->collection($orders));
+        $transformer = app(OrderTransformer::class);
+
+        $orders->setCollection(
+            $transformer->collection($orders->getCollection())
+        );
+
+        return ApiResponse::success($orders);
     }
 
     /**
@@ -42,37 +47,5 @@ class OrderController extends Controller
 
         return ApiResponse::success(new OrderTransformer()->transform($order->load('orderItems')));
 
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Order $order)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Order $order)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Order $order)
-    {
-        //
     }
 }

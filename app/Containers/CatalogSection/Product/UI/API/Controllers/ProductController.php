@@ -16,9 +16,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    public function index(GetAllProductsAction $action)
+    public function index(GetAllProductsAction $action, Request $request)
     {
-        $products = $action->run();
+        $products = $action->run($request->limit ?? 10);
 
         $transformer = app(ProductTransfomer::class);
 

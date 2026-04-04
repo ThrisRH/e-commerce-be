@@ -49,7 +49,6 @@ class CreateOrderAction extends Action
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],
-                    'price' => $item['price'] ?? 0, // Ensure price is handled if available
                 ]);
             }
 

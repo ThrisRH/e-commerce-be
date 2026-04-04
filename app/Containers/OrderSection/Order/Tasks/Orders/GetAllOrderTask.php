@@ -7,8 +7,8 @@ use App\Ship\Parents\Tasks\Task;
 
 class GetAllOrderTask extends Task
 {
-    public function run()
+    public function run(int $limit)
     {
-        return Order::all();
+        return Order::latest()->paginate($limit);
     }
 }

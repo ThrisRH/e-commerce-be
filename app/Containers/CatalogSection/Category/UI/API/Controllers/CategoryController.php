@@ -16,11 +16,17 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(GetAllCategoriesAction $action)
+    public function index(GetAllCategoriesAction $action, Request $request)
     {
-        $categories = $action->run();
+        $categories = $action->run($request->limit ?? 10);
 
-        return ApiResponse::success((new CategoryTransformer)->collection($categories));
+        $transformer = app(CategoryTransformer::class);
+
+        $categories->setCollection(
+            $transformer->collection($categories->getCollection())
+        );
+
+        return ApiResponse::success($categories);
     }
 
     public function store(Request $request, CreateCategoryAction $action)

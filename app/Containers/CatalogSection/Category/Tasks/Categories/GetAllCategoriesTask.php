@@ -7,8 +7,8 @@ use App\Ship\Parents\Tasks\Task;
 
 class GetAllCategoriesTask extends Task
 {
-    public function run()
+    public function run(int $limit)
     {
-        return Category::all();
+        return Category::latest()->paginate($limit);
     }
 }

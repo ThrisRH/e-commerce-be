@@ -7,10 +7,10 @@ use App\Ship\Parents\Tasks\Task;
 
 class GetAllProductsTask extends Task
 {
-    public function run()
+    public function run(int $limit)
     {
         return Product::with(['productAttributes.attribute', 'category', 'brand'])
             ->latest()
-            ->paginate(10);
+            ->paginate($limit);
     }
 }

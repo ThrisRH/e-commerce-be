@@ -14,8 +14,8 @@ class GetAllOrderAction extends Action
         $this->getAllOrderTask = $getAllOrderTask;
     }
 
-    public function run()
+    public function run(int $limit)
     {
-        return $this->getAllOrderTask->run();
+        return $this->getAllOrderTask->run($limit);
     }
 }

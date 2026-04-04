@@ -9,8 +9,8 @@ class GetAllProductsAction extends Action
 {
     public function __construct(private GetAllProductsTask $getAllProductsTask) {}
 
-    public function run()
+    public function run(int $limit)
     {
-        return $this->getAllProductsTask->run();
+        return $this->getAllProductsTask->run($limit);
     }
 }
