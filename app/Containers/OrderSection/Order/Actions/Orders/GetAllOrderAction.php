@@ -7,8 +7,15 @@ use App\Ship\Parents\Actions\Action;
 
 class GetAllOrderAction extends Action
 {
-    public function run()
+    private GetAllOrderTask $getAllOrderTask;
+
+    public function __construct(GetAllOrderTask $getAllOrderTask)
     {
-        return app(GetAllOrderTask::class)->run();
+        $this->getAllOrderTask = $getAllOrderTask;
+    }
+
+    public function run(int $limit)
+    {
+        return $this->getAllOrderTask->run($limit);
     }
 }

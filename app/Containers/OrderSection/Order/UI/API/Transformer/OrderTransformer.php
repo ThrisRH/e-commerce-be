@@ -19,6 +19,7 @@ class OrderTransformer extends Transformer
             'tracking_code' => $order->tracking_code,
             'total_amount' => $order->total_amount,
             'shipping_fee' => $order->shipping_fee,
+            'tracking_code' => $order->tracking_code,
             'status' => $order->status,
             'shipping_name' => $order->shipping_name,
             'shipping_phone' => $order->shipping_phone,

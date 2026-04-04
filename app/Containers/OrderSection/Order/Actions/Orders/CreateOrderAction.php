@@ -11,21 +11,41 @@ use Illuminate\Support\Facades\DB;
 
 class CreateOrderAction extends Action
 {
+    private CreateOrderTask $createOrderTask;
+
+    private CreateOrderItemsTask $createOrderItemsTask;
+
+    private CalculatorOrderTotalTask $calculatorOrderTotalTask;
+
+    private GenerateOrderTrackingNumberTask $generateOrderTrackingNumberTask;
+
+    public function __construct(
+        CreateOrderTask $createOrderTask,
+        CreateOrderItemsTask $createOrderItemsTask,
+        CalculatorOrderTotalTask $calculatorOrderTotalTask,
+        GenerateOrderTrackingNumberTask $generateOrderTrackingNumberTask
+    ) {
+        $this->createOrderTask = $createOrderTask;
+        $this->createOrderItemsTask = $createOrderItemsTask;
+        $this->calculatorOrderTotalTask = $calculatorOrderTotalTask;
+        $this->generateOrderTrackingNumberTask = $generateOrderTrackingNumberTask;
+    }
+
     public function run(array $data)
     {
         $items = $data['items'];
         unset($data['items']);
 
         return DB::transaction(function () use ($data, $items) {
-            $total = app(CalculatorOrderTotalTask::class)->run($items);
+            $total = $this->calculatorOrderTotalTask->run($items);
 
             $data['total_amount'] = $total;
-            $data['tracking_code'] = app(GenerateOrderTrackingNumberTask::class)->run();
+            $data['tracking_code'] = $this->generateOrderTrackingNumberTask->run();
 
-            $order = app(CreateOrderTask::class)->run($data);
+            $order = $this->createOrderTask->run($data);
 
             foreach ($items as $item) {
-                app(CreateOrderItemsTask::class)->run([
+                $this->createOrderItemsTask->run([
                     'order_id' => $order->id,
                     'product_id' => $item['product_id'],
                     'quantity' => $item['quantity'],

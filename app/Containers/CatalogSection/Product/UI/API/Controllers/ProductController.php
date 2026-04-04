@@ -2,12 +2,12 @@
 
 namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Product\Actions\CreateProductAction;
-use App\Containers\CatalogSection\Product\Actions\DeleteProductAction;
-use App\Containers\CatalogSection\Product\Actions\FindProductByIdAction;
-use App\Containers\CatalogSection\Product\Actions\GetAllByCateAction;
-use App\Containers\CatalogSection\Product\Actions\GetAllProductsAction;
-use App\Containers\CatalogSection\Product\Actions\UpdateProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\CreateProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\DeleteProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\FindProductByIdAction;
+use App\Containers\CatalogSection\Product\Actions\Products\GetAllByCateAction;
+use App\Containers\CatalogSection\Product\Actions\Products\GetAllProductsAction;
+use App\Containers\CatalogSection\Product\Actions\Products\UpdateProductAction;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
@@ -16,11 +16,17 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ProductController extends Controller
 {
-    public function index(GetAllProductsAction $action)
+    public function index(GetAllProductsAction $action, Request $request)
     {
-        $products = $action->run();
+        $products = $action->run($request->limit ?? 10);
 
-        return ApiResponse::success((new ProductTransfomer)->collection($products));
+        $transformer = app(ProductTransfomer::class);
+
+        $products->setCollection(
+            $transformer->collection($products->getCollection())
+        );
+
+        return ApiResponse::success($products);
     }
 
     public function store(Request $request, CreateProductAction $action)
@@ -40,7 +46,7 @@ class ProductController extends Controller
 
         $product = $action->run($data);
 
-        return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product created successfully', Response::HTTP_CREATED);
+        return ApiResponse::success(app(ProductTransfomer::class)->transform($product), 'Product created successfully', Response::HTTP_CREATED);
     }
 
     public function show($id, FindProductByIdAction $action)

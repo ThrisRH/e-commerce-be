@@ -11,13 +11,15 @@ class ApiResponse
     {
         $meta = null;
 
-        if ($meta instanceof LengthAwarePaginator) {
+        if ($data instanceof LengthAwarePaginator) {
             $meta = [
                 'total' => $data->total(),
                 'per_page' => $data->perPage(),
                 'current_page' => $data->currentPage(),
                 'last_page' => $data->lastPage(),
             ];
+
+            $data = $data->items();
         }
 
         return response()->json([

@@ -2,12 +2,12 @@
 
 namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Category\Actions\CreateCategoryAction;
-use App\Containers\CatalogSection\Category\Actions\DeleteCategoryAction;
-use App\Containers\CatalogSection\Category\Actions\FindCategoryByIdAction;
-use App\Containers\CatalogSection\Category\Actions\FindProductByCateAction;
-use App\Containers\CatalogSection\Category\Actions\GetAllCategoriesAction;
-use App\Containers\CatalogSection\Category\Actions\UpdateCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\CreateCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\DeleteCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindCategoryByIdAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindProductByCateAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\GetAllCategoriesAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\UpdateCategoryAction;
 use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
@@ -16,11 +16,17 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    public function index(GetAllCategoriesAction $action)
+    public function index(GetAllCategoriesAction $action, Request $request)
     {
-        $categories = $action->run();
+        $categories = $action->run($request->limit ?? 10);
 
-        return ApiResponse::success((new CategoryTransformer)->collection($categories));
+        $transformer = app(CategoryTransformer::class);
+
+        $categories->setCollection(
+            $transformer->collection($categories->getCollection())
+        );
+
+        return ApiResponse::success($categories);
     }
 
     public function store(Request $request, CreateCategoryAction $action)
@@ -53,7 +59,13 @@ class CategoryController extends Controller
     {
         $products = $action->run($id);
 
-        return ApiResponse::success((new ProductTransfomer)->collection($products));
+        $transformer = app(ProductTransfomer::class);
+
+        $products->setCollection(
+            $transformer->collection($products->getCollection())
+        );
+
+        return ApiResponse::success($products);
     }
 
     public function update(Request $request, $id, UpdateCategoryAction $action)
