@@ -53,7 +53,13 @@ class CategoryController extends Controller
     {
         $products = $action->run($id);
 
-        return ApiResponse::success((new ProductTransfomer)->collection($products));
+        $transformer = app(ProductTransfomer::class);
+
+        $products->setCollection(
+            $transformer->collection($products->getCollection())
+        );
+
+        return ApiResponse::success($products);
     }
 
     public function update(Request $request, $id, UpdateCategoryAction $action)

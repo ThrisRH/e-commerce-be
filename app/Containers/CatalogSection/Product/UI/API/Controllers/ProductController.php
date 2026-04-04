@@ -20,7 +20,13 @@ class ProductController extends Controller
     {
         $products = $action->run();
 
-        return ApiResponse::success((new ProductTransfomer)->collection($products));
+        $transformer = app(ProductTransfomer::class);
+
+        $products->setCollection(
+            $transformer->collection($products->getCollection())
+        );
+
+        return ApiResponse::success($products);
     }
 
     public function store(Request $request, CreateProductAction $action)
@@ -40,7 +46,7 @@ class ProductController extends Controller
 
         $product = $action->run($data);
 
-        return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product created successfully', Response::HTTP_CREATED);
+        return ApiResponse::success(app(ProductTransfomer::class)->transform($product), 'Product created successfully', Response::HTTP_CREATED);
     }
 
     public function show($id, FindProductByIdAction $action)
