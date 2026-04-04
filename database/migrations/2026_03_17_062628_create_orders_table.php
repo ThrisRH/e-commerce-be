@@ -20,6 +20,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained()
                 ->nullOnDelete();
+            $table->string('tracking_code')->nullable()->unique();
 
             $table->decimal('total_amount', 10, 2);
             $table->decimal('shipping_fee', 10, 2)->default(0);

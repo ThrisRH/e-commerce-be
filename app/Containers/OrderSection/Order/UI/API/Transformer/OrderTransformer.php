@@ -16,6 +16,7 @@ class OrderTransformer extends Transformer
         return [
             'id' => $order->id,
             'user_id' => $order->user_id,
+            'tracking_code' => $order->tracking_code,
             'total_amount' => $order->total_amount,
             'shipping_fee' => $order->shipping_fee,
             'status' => $order->status,

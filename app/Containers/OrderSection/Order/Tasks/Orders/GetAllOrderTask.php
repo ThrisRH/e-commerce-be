@@ -9,6 +9,6 @@ class GetAllOrderTask extends Task
 {
     public function run()
     {
-        return Order::all();
+        return Order::latest()->paginate(10);
     }
 }

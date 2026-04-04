@@ -5,6 +5,7 @@ namespace App\Containers\OrderSection\Order\Actions\Orders;
 use App\Containers\OrderSection\Order\Tasks\OrderItems\CreateOrderItemsTask;
 use App\Containers\OrderSection\Order\Tasks\Orders\CalculatorOrderTotalTask;
 use App\Containers\OrderSection\Order\Tasks\Orders\CreateOrderTask;
+use App\Containers\OrderSection\Order\Tasks\Orders\GenerateOrderTrackingNumberTask;
 use App\Ship\Parents\Actions\Action;
 use Illuminate\Support\Facades\DB;
 
@@ -19,6 +20,7 @@ class CreateOrderAction extends Action
             $total = app(CalculatorOrderTotalTask::class)->run($items);
 
             $data['total_amount'] = $total;
+            $data['tracking_code'] = app(GenerateOrderTrackingNumberTask::class)->run();
 
             $order = app(CreateOrderTask::class)->run($data);
 
