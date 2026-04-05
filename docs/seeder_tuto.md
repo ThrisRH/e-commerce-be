@@ -1,170 +1,99 @@
 You are a senior Laravel developer working on an existing Porto architecture project.
 
 IMPORTANT:
-- First, carefully read and understand the current project structure.
+- First, read the current project structure (Models, relationships, namespaces).
 - Detect:
-  - Model locations (e.g. App\Containers\...\Models\...)
-  - Namespace conventions
-  - Existing relationships in Category and Attribute models
-  - Pivot table name (likely attribute_category or category_attribute)
-- Do NOT assume structure blindly. Adapt to the existing codebase.
+  - Product model
+  - Category model
+  - Attribute model
+  - ProductAttributeValue (or equivalent table)
+- Reuse existing relationships (DO NOT reinvent schema).
 
 ---
 
-### CURRENT CONTEXT
+## CURRENT SYSTEM
 
-I already have:
-
-1. Category model with hierarchical structure (parent_id)
-2. Attribute model already seeded
-3. Categories seeded with slugs like:
-   - laptop-officeworks
-   - laptop-gaming
-   - pc-parts
-   - cpu
-   - gpu
-   - ram
-   - hdd
-   - ssd
-   - mainboard
-   - psu
-   - case
-   - monitor
-
-4. Attributes seeded with slugs like:
-   - color
-   - warranty
-   - weight
-   - operating-system
-   - cpu-series
-   - cpu-cores
-   - cpu-threads
-   - base-clock
-   - boost-clock
-   - cpu-socket
-   - cpu-cache
-   - tdp
-   - gpu-chipset
-   - vram-capacity
-   - vram-type
-   - gpu-interface
-   - ram-capacity
-   - ram-speed
-   - ram-type
-   - ram-slots
-   - storage-capacity
-   - storage-type
-   - form-factor
-   - read-speed
-   - write-speed
-   - motherboard-chipset
-   - form-factor-mobo
-   - screen-size
-   - resolution
-   - refresh-rate
-   - response-time
-   - panel-type
-   - wattage
-   - efficiency-rating
+- Categories exist (with parent-child)
+- Attributes exist and are mapped to categories via `category_attributes`
+- Each category defines which attributes a product must have
+- You must create products with attribute values following category attributes
 
 ---
 
-### TASK
+## TASK
 
-Create a seeder: CategoryAttributeSeeder
+Create a ProductSeeder that:
+
+### 1. For EACH category:
+- laptop-officeworks
+- laptop-gaming
+- cpu
+- gpu
+- ram
+- hdd
+- ssd
+- mainboard
+- psu
+- monitor
+
+👉 Create AT LEAST **3 products per category**
 
 ---
 
-### REQUIREMENTS
+### 2. Each product must:
+- have realistic name (real-world product)
+- belong to correct category
+- include FULL attribute values based on that category
 
-1. Fetch categories by slug dynamically (no hardcoded IDs)
+---
 
-2. Fetch attributes by slug dynamically
+### 3. If an attribute is missing in AttributeSeeder:
+👉 CREATE it automatically before using
 
-3. Attach attributes to categories using pivot relationship
+Examples of missing attributes you may need to create:
 
-4. Mapping:
-
-#### Laptop Officeworks
-- color
-- warranty
-- weight
-- operating-system
-- cpu-series
-- ram-capacity
-- storage-capacity
-- screen-size
-- resolution
-
-#### Laptop Gaming
-- all Laptop Officeworks attributes PLUS:
-- gpu-chipset
-- vram-capacity
-- refresh-rate
+#### Laptop
+- battery
+- gpu-model
+- weight (already exists maybe)
+- screen-type
 
 #### CPU
-- cpu-series
-- cpu-cores
-- cpu-threads
-- base-clock
-- boost-clock
-- cpu-socket
-- cpu-cache
-- tdp
+- cpu-model
+- integrated-gpu
 
 #### GPU
-- gpu-chipset
-- vram-capacity
-- vram-type
-- gpu-interface
-
-#### RAM
-- ram-capacity
-- ram-speed
-- ram-type
-- ram-slots
-
-#### HDD & SSD
-- storage-capacity
-- storage-type
-- form-factor
-- read-speed
-- write-speed
-
-#### Mainboard
-- motherboard-chipset
-- cpu-socket
-- ram-slots
-- form-factor-mobo
-
-#### PSU
-- wattage
-- efficiency-rating
-
-#### Monitor
-- screen-size
-- resolution
-- refresh-rate
-- response-time
-- panel-type
+- gpu-brand
+- gpu-model
+- gpu-boost-clock
+- power-consumption
 
 ---
 
-### IMPLEMENTATION DETAILS
+### 4. Attribute values must be REALISTIC
 
-- Use syncWithoutDetaching()
-- Create helper method:
-  attachAttributes(Category $category, array $attributeSlugs)
+Example:
 
-- Handle missing category or attribute gracefully (skip if not found)
+#### CPU (Intel Core i9-14900K)
+- cpu-series: i9
+- cpu-model: 14900K
+- cpu-cores: 24
+- cpu-threads: 32
+- base-clock: 3.2
+- boost-clock: 6.0
+- cpu-socket: LGA1700
+- tdp: 125
 
-- Follow Porto structure:
-  namespace Database\Seeders;
+#### GPU (RTX 4090)
+- gpu-chipset: NVIDIA RTX 4090
+- vram-capacity: 24
+- vram-type: GDDR6X
+
+#### Laptop Gaming
+- cpu-series: i7
+- ram-capacity: 16
+- storage-capacity: 1024
+- gpu-chipset: RTX 4060
+- refresh-rate: 144
 
 ---
-
-### OUTPUT
-
-- Full working PHP seeder class
-- Clean, readable, maintainable code
-- No pseudo code

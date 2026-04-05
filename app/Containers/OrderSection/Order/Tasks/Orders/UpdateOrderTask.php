@@ -5,10 +5,11 @@ namespace App\Containers\OrderSection\Order\Tasks\Orders;
 use App\Containers\OrderSection\Order\Models\Order;
 use App\Ship\Parents\Tasks\Task;
 
-class GetAllOrderTask extends Task
+class UpdateOrderTask extends Task
 {
-    public function run(int $limit)
+    public function run(Order $order, array $data): Order
     {
-        return Order::with(['orderItems.product'])->latest()->paginate($limit);
+        $order->update($data);
+        return $order;
     }
 }

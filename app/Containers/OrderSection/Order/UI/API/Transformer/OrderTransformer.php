@@ -15,21 +15,34 @@ class OrderTransformer extends Transformer
     {
         return [
             'id' => $order->id,
-            'user_id' => $order->user_id,
             'tracking_code' => $order->tracking_code,
+
             'total_amount' => $order->total_amount,
             'shipping_fee' => $order->shipping_fee,
-            'tracking_code' => $order->tracking_code,
+
             'status' => $order->status,
+            'payment_method' => $order->payment_method,
+            'payment_status' => $order->payment_status,
+
             'shipping_name' => $order->shipping_name,
             'shipping_phone' => $order->shipping_phone,
             'shipping_address' => $order->shipping_address,
-            'payment_method' => $order->payment_method,
-            'payment_status' => $order->payment_status,
-            'transaction_id' => $order->transaction_id,
+
             'note' => $order->note,
 
-            'items' => $order->orderItems,
+            'items' => $order->orderItems->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'product_id' => $item->product_id,
+
+                    'product_name' => $item->product->name ?? null,
+                    'product_image' => $item->product->image_url ?? null,
+
+                    'quantity' => $item->quantity,
+                    'price' => $item->product->price,
+                    'total' => $item->product->price * $item->quantity,
+                ];
+            }),
 
             'created_at' => $order->created_at,
             'updated_at' => $order->updated_at,
