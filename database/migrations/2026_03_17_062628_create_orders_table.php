@@ -23,8 +23,6 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('tracking_code')->nullable()->unique();
 
-            $table->string('tracking_code')->unique();
-
             $table->decimal('total_amount', 10, 2);
             $table->decimal('shipping_fee', 10, 2)->default(0);
 
