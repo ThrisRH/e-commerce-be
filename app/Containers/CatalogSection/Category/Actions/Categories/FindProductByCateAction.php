@@ -9,8 +9,8 @@ class FindProductByCateAction extends Action
 {
     public function __construct(private FindProductByCateTask $task) {}
 
-    public function run($id)
+    public function run($id, $limit)
     {
-        return $this->task->run($id);
+        return $this->task->run($id, $limit);
     }
 }

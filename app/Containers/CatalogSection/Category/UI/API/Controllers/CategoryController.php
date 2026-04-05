@@ -55,9 +55,9 @@ class CategoryController extends Controller
         return ApiResponse::success((new CategoryTransformer)->transform($category));
     }
 
-    public function showByCateId($id, FindProductByCateAction $action)
+    public function showByCateId($id, FindProductByCateAction $action, Request $request)
     {
-        $products = $action->run($id);
+        $products = $action->run($id, $request->limit ?? 25);
 
         $transformer = app(ProductTransfomer::class);
 
