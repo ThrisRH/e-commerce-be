@@ -10,6 +10,7 @@ use App\Containers\AppSection\Authentication\UI\API\Transfomers\AuthTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AuthController extends Controller
 {
@@ -35,12 +36,12 @@ class AuthController extends Controller
         return ApiResponse::success(app(AuthTransfomer::class)->transform($user));
     }
 
-    // public function logout()
-    // {
-    //     app(LogoutAction::class)->run();
+    public function logout()
+    {
+        app(LogoutAction::class)->run();
 
-    //     return response()->json(['message' => 'Logged out']);
-    // }
+        return ApiResponse::success(['message' => 'Logged out']);
+    }
 
     public function register(Request $request)
     {
@@ -51,6 +52,8 @@ class AuthController extends Controller
             'password' => 'required|min:6|max:255',
         ]);
 
-        return app(RegisterAction::class)->run($data);
+        app(RegisterAction::class)->run($data);
+
+        return ApiResponse::success('Register success', Response::HTTP_CREATED);
     }
 }
