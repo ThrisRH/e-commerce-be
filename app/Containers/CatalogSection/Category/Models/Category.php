@@ -38,6 +38,13 @@ class Category extends Model
         return $this->hasMany(CategoryAttribute::class);
     }
 
+    public function attributes()
+    {
+        return $this->belongsToMany(\App\Containers\CatalogSection\Attribute\Models\Attribute::class, 'category_attributes')
+            ->withPivot('is_required')
+            ->withTimestamps();
+    }
+
     public function parentCategory()
     {
         return $this->belongsTo(Category::class, 'parent_id');

@@ -5,6 +5,7 @@ namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 use App\Containers\CatalogSection\Product\Actions\Products\CreateProductAction;
 use App\Containers\CatalogSection\Product\Actions\Products\DeleteProductAction;
 use App\Containers\CatalogSection\Product\Actions\Products\FindProductByIdAction;
+use App\Containers\CatalogSection\Product\Actions\Products\FindProductsByKeywordAction;
 use App\Containers\CatalogSection\Product\Actions\Products\GetAllByCateAction;
 use App\Containers\CatalogSection\Product\Actions\Products\GetAllProductsAction;
 use App\Containers\CatalogSection\Product\Actions\Products\UpdateProductAction;
@@ -64,6 +65,26 @@ class ProductController extends Controller
         $products = $action->run($cate_id, $number ?? null);
 
         return ApiResponse::success(new ProductTransfomer()->collection($products));
+    }
+
+    public function findProductByKeyword(Request $request, FindProductsByKeywordAction $action)
+    {
+        $keyword = $request->query('keyword');
+        $limit = $request->query('limit', 10);
+
+        if (! $keyword) {
+            return ApiResponse::error('Keyword is required', Response::HTTP_BAD_REQUEST);
+        }
+
+        $products = $action->run($keyword, (int) $limit);
+
+        $transformer = app(ProductTransfomer::class);
+
+        $products->setCollection(
+            $transformer->collection($products->getCollection())
+        );
+
+        return ApiResponse::success($products);
     }
 
     public function update(Request $request, UpdateProductAction $updateAction, FindProductByIdAction $findAction)
