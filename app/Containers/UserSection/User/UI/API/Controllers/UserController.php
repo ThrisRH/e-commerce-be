@@ -10,6 +10,7 @@ use App\Containers\UserSection\User\Actions\CreateStaffAccountAction;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -24,7 +25,9 @@ class UserController extends Controller
             'password' => 'required|string|min:6',
         ]);
 
-        return ApiResponse::success($action->run($data));
+        $user = $action->run($data);
+
+        return ApiResponse::success($user, 'User created successfully', Response::HTTP_CREATED);
     }
 
     public function getCustomers(Request $request, GetUsersAction $getUsersAction)
