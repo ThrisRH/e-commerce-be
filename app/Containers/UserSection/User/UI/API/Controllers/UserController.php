@@ -6,6 +6,7 @@ use App\Containers\UserSection\Profile\Actions\DeleteUserAction;
 use App\Containers\UserSection\Profile\Actions\GetUserByIdAction;
 use App\Containers\UserSection\Profile\Actions\GetUsersAction;
 use App\Containers\UserSection\Profile\Actions\UpdateUserAction;
+use App\Containers\UserSection\User\Actions\CreateStaffAccountAction;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -13,6 +14,19 @@ use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
+    public function createStaff(Request $request, CreateStaffAccountAction $action)
+    {
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'phone_number' => 'required|string|max:15',
+            'role' => 'required|string|not_in:n-customer',
+            'password' => 'required|string|min:6',
+        ]);
+
+        return ApiResponse::success($action->run($data));
+    }
+
     public function getCustomers(Request $request, GetUsersAction $getUsersAction)
     {
         return ApiResponse::success($getUsersAction->run($request->limit, ['n-customer']));
@@ -20,7 +34,7 @@ class UserController extends Controller
 
     public function getStaffs(Request $request, GetUsersAction $getUsersAction)
     {
-        return ApiResponse::success($getUsersAction->run($request->limit, ['super-admin']));
+        return ApiResponse::success($getUsersAction->run($request->limit, ['super-admin', 'o-manager', 'p-manager']));
     }
 
     public function show(Request $request, GetUserByIdAction $action)

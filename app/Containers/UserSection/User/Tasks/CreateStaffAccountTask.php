@@ -1,20 +1,21 @@
 <?php
 
-namespace App\Containers\AppSection\Authentication\Tasks;
+namespace App\Containers\UserSection\User\Tasks;
 
 use App\Containers\AppSection\Authentication\Models\User;
 use App\Ship\Parents\Tasks\Task;
 use Illuminate\Support\Facades\Hash;
 
-class CreateUserTask extends Task
+class CreateStaffAccountTask extends Task
 {
-    public function run(array $data)
+    public function run(array $data, $password)
     {
-        return User::create([
+        User::create([
             'name' => $data['name'],
             'email' => $data['email'],
-            'password' => Hash::make($data['password']),
             'phone_number' => $data['phone_number'],
+            'password' => Hash::make($password),
+            'role' => $data['role'],
         ]);
     }
 }

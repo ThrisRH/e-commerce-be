@@ -7,7 +7,7 @@ use Spatie\Permission\Models\Role;
 
 class GetRoleByIdTask extends Task
 {
-    public function run($id)
+    public function run($id): Role
     {
         return Role::findOrFail($id);
     }

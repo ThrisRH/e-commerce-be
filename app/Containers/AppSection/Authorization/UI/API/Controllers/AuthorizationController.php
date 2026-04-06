@@ -30,6 +30,8 @@ class AuthorizationController extends Controller
                 'max:255',
                 Rule::unique('roles', 'name')->where('guard_name', 'api'),
             ],
+            'display_name' => 'nullable|string|max:255',
+            'description' => 'nullable|string|max:255',
         ]);
 
         $role = $action->run($data);
