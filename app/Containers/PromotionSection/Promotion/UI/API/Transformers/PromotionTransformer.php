@@ -11,6 +11,7 @@ class PromotionTransformer
             'name' => $promotion->name,
             'description' => $promotion->description,
             'type' => $promotion->type,
+            'strategy_key' => $promotion->strategy_key,
             'value' => $promotion->value,
             'max_discount' => $promotion->max_discount,
             'start_date' => $promotion->start_date,
@@ -20,6 +21,16 @@ class PromotionTransformer
             'priority' => $promotion->priority,
             'usage_limit' => $promotion->usage_limit,
             'usage_count' => $promotion->usage_count,
+            'categories' => $promotion->relationLoaded('categories') ? $promotion->categories->pluck('name', 'id') : [],
+            'brands' => $promotion->relationLoaded('brands') ? $promotion->brands->pluck('name', 'id') : [],
+            'products' => $promotion->relationLoaded('products') ? $promotion->products->pluck('name', 'id') : [],
         ];
+    }
+
+    public function collection($promotions)
+    {
+        return $promotions->map(function ($promotion) {
+            return $this->transform($promotion);
+        });
     }
 }

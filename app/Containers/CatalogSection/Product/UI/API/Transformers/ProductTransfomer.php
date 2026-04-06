@@ -2,6 +2,8 @@
 
 namespace App\Containers\CatalogSection\Product\UI\API\Transformers;
 
+use App\Containers\PromotionSection\Promotion\Tasks\PromotionTasks\GetProductDiscountPriceTask;
+
 class ProductTransfomer
 {
     public function collection($products)
@@ -18,6 +20,8 @@ class ProductTransfomer
             'description' => $product->description,
             'image_url' => $product->image_url,
             'stock' => $product->stock,
+            'original_price' => (float) $product->price,
+            'discounted_price' => app(GetProductDiscountPriceTask::class)->run($product)['discounted_price'],
             'price' => $product->price,
             'is_new' => $product->is_new,
 

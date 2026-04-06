@@ -7,8 +7,9 @@ use App\Ship\Parents\Tasks\Task;
 
 class DeletePromotionTask extends Task
 {
-    public function run(Promotion $promotion)
+    public function run($id)
     {
+        $promotion = Promotion::findOrFail($id);
         return $promotion->delete();
     }
 }

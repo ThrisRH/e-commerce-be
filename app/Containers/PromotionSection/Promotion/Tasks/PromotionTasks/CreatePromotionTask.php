@@ -7,7 +7,7 @@ use App\Ship\Parents\Tasks\Task;
 
 class CreatePromotionTask extends Task
 {
-    public function run(array $data): Promotion
+    public function run(array $data)
     {
         return Promotion::create($data);
     }

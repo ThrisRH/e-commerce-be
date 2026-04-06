@@ -2,18 +2,18 @@
 
 namespace App\Containers\PromotionSection\Promotion\Actions\Promotions;
 
-use App\Containers\PromotionSection\Promotion\Tasks\PromotionTasks\CreatePromotionTask;
+use App\Containers\PromotionSection\Promotion\Tasks\PromotionTasks\UpdatePromotionTask;
 use App\Ship\Parents\Actions\Action;
 use Illuminate\Support\Facades\DB;
 
-class CreatePromotionAction extends Action
+class UpdatePromotionAction extends Action
 {
-    public function __construct(private CreatePromotionTask $createPromotionTask) {}
+    public function __construct(private UpdatePromotionTask $updatePromotionTask) {}
 
-    public function run(array $data)
+    public function run($id, array $data)
     {
-        return DB::transaction(function () use ($data) {
-            $promotion = $this->createPromotionTask->run($data);
+        return DB::transaction(function () use ($id, $data) {
+            $promotion = $this->updatePromotionTask->run($id, $data);
 
             if (isset($data['category_ids'])) {
                 $promotion->categories()->sync($data['category_ids']);
