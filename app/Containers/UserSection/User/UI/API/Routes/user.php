@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('api/v1/users')->group(function () {
     Route::get('/customers', [UserController::class, 'getCustomers']);
     Route::get('/staffs', [UserController::class, 'getStaffs']);
+    Route::post('/staffs', [UserController::class, 'createStaff']);
     Route::get('/{id}', [UserController::class, 'show']);
     Route::put('/{id}', [UserController::class, 'update']);
     Route::patch('/{id}', [UserController::class, 'update']);

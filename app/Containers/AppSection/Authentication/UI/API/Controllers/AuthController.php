@@ -50,7 +50,6 @@ class AuthController extends Controller
             'email' => 'required|email|unique:users,email|max:255',
             'phone_number' => 'required|string|max:12',
             'password' => 'required|min:6|max:255',
-            'role' => 'nullable|string|max:255|exists:roles,name',
         ]);
 
         app(RegisterAction::class)->run($data);

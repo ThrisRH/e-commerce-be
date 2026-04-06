@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('roles', function (Blueprint $table) {
-            $table->string('display_name');
-            $table->string('description')->nullable();
+            $table->string('display_name')->nullable()->change();
+            $table->string('description')->nullable()->change();
         });
     }
 

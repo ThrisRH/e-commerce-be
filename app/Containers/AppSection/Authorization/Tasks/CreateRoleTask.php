@@ -9,6 +9,11 @@ class CreateRoleTask extends Task
 {
     public function run(array $data)
     {
-        return Role::create(['name' => $data['name'], 'guard_name' => 'api']);
+        return Role::create([
+            'name' => $data['name'],
+            'display_name' => $data['display_name'],
+            'description' => $data['description'],
+            'guard_name' => 'api',
+        ]);
     }
 }
