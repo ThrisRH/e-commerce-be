@@ -3,8 +3,9 @@
 namespace App\Containers\CatalogSection\Product\Tasks\ProductAttributes;
 
 use App\Containers\CatalogSection\Product\Models\Product;
+use App\Ship\Parents\Tasks\Task;
 
-class UpdateProductTask
+class UpdateProductTask extends Task
 {
     public function run(Product $product, array $data)
     {

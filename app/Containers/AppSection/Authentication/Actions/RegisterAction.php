@@ -14,10 +14,10 @@ class RegisterAction extends Action
         DB::transaction(function () use ($data) {
             $user = app(CreateUserTask::class)->run($data);
 
-            app(AssignRoleTask::class)->run($user, 'n-customer');
+            app(AssignRoleTask::class)->run($user, $data['role'] ?? 'n-customer');
 
             return [
-                'user' => $data,
+                'user' => $user,
             ];
         });
     }
