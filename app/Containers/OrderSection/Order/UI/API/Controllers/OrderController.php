@@ -42,6 +42,7 @@ class OrderController extends Controller
             'shipping_name' => 'required|string',
             'shipping_phone' => 'required|string',
             'shipping_address' => 'required|string',
+            'payment_method' => 'required|string',
             'note' => 'nullable|string',
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
