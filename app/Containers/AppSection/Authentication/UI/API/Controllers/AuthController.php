@@ -2,6 +2,7 @@
 
 namespace App\Containers\AppSection\Authentication\UI\API\Controllers;
 
+use App\Containers\AppSection\Authentication\Actions\ChangePasswordAction;
 use App\Containers\AppSection\Authentication\Actions\LoginAction;
 use App\Containers\AppSection\Authentication\Actions\LogoutAction;
 use App\Containers\AppSection\Authentication\Actions\MeAction;
@@ -55,5 +56,17 @@ class AuthController extends Controller
         app(RegisterAction::class)->run($data);
 
         return ApiResponse::success('Register success', Response::HTTP_CREATED);
+    }
+
+    public function changePassword(Request $request)
+    {
+        $data = $request->validate([
+            'old_password' => 'required|string',
+            'new_password' => 'required|string|min:6|confirmed',
+        ]);
+
+        app(ChangePasswordAction::class)->run($data);
+
+        return ApiResponse::success(['message' => 'Password changed successfully']);
     }
 }

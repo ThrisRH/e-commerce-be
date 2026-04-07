@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('api/v1/categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 
-    Route::middleware(['auth:api', 'role:admin|p-manager'])->group(function () {
+    Route::middleware(['auth:api', 'role:super-admin|p-manager'])->group(function () {
         Route::post('/', [CategoryController::class, 'store']);
         Route::put('/{id}', [CategoryController::class, 'update']);
         Route::patch('/{id}', [CategoryController::class, 'update']);
