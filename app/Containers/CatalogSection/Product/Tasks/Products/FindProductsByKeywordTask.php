@@ -11,7 +11,6 @@ class FindProductsByKeywordTask extends Task
     {
         return Product::with(['productAttributes.attribute', 'category', 'brand'])
             ->where('name', 'LIKE', "%$keyword%")
-            ->orWhere('description', 'LIKE', "%$keyword%")
             ->latest()
             ->paginate($limit);
     }

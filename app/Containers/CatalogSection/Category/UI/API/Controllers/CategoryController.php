@@ -4,7 +4,9 @@ namespace App\Containers\CatalogSection\Category\UI\API\Controllers;
 
 use App\Containers\CatalogSection\Category\Actions\Categories\CreateCategoryAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\DeleteCategoryAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindCateByNameAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\FindCategoryByIdAction;
+use App\Containers\CatalogSection\Category\Actions\Categories\FindCategoryBySlugAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\FindProductByCateAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\GetAllCategoriesAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\UpdateCategoryAction;
@@ -13,6 +15,7 @@ use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class CategoryController extends Controller
 {
@@ -51,6 +54,33 @@ class CategoryController extends Controller
     public function show($id, FindCategoryByIdAction $action)
     {
         $category = $action->run($id);
+
+        return ApiResponse::success((new CategoryTransformer)->transform($category));
+    }
+
+    public function findCateByName(Request $request, FindCateByNameAction $action)
+    {
+        $keyword = $request->query('keyword');
+        $limit = $request->query('limit', 10);
+
+        if (! $keyword) {
+            return ApiResponse::error('Keyword is required', Response::HTTP_BAD_REQUEST);
+        }
+
+        $categories = $action->run($keyword, (int) $limit);
+
+        $transformer = app(CategoryTransformer::class);
+
+        $categories->setCollection(
+            $transformer->collection($categories->getCollection())
+        );
+
+        return ApiResponse::success($categories);
+    }
+
+    public function findBySlug($slug, FindCategoryBySlugAction $action)
+    {
+        $category = $action->run($slug);
 
         return ApiResponse::success((new CategoryTransformer)->transform($category));
     }

@@ -3,6 +3,7 @@
 namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 
 use App\Containers\OrderSection\Order\Actions\Orders\CreateOrderAction;
+use App\Containers\OrderSection\Order\Actions\Orders\SearchOrdersAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetAllOrderAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetOrderByIdAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetWeeklyRevenueAction;
@@ -84,5 +85,17 @@ class OrderController extends Controller
         $revenue = $action->run();
 
         return ApiResponse::success($revenue);
+    }
+
+    public function search(Request $request, SearchOrdersAction $action)
+    {
+        $filters = $request->validate([
+            'tracking_code' => 'nullable|string',
+            'shipping_phone' => 'nullable|string',
+        ]);
+
+        $orders = $action->run($filters);
+
+        return ApiResponse::success(app(OrderTransformer::class)->collection($orders));
     }
 }

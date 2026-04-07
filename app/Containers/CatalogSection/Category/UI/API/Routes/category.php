@@ -7,10 +7,16 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('api/v1/categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
-    Route::post('/', [CategoryController::class, 'store']);
+
+    Route::middleware(['auth:api', 'role:admin|p-manager'])->group(function () {
+        Route::post('/', [CategoryController::class, 'store']);
+        Route::put('/{id}', [CategoryController::class, 'update']);
+        Route::patch('/{id}', [CategoryController::class, 'update']);
+        Route::delete('/{id}', [CategoryController::class, 'destroy']);
+    });
+
+    Route::get('/search', [CategoryController::class, 'findCateByName']);
+    Route::get('/slug/{slug}', [CategoryController::class, 'findBySlug']);
     Route::get('/{id}', [CategoryController::class, 'show']);
-    Route::put('/{id}', [CategoryController::class, 'update']);
-    Route::patch('/{id}', [CategoryController::class, 'update']);
-    Route::delete('/{id}', [CategoryController::class, 'destroy']);
     Route::get('/{id}/products', [CategoryController::class, 'showByCateId']);
 });
