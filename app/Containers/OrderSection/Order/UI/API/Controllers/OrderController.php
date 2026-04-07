@@ -5,6 +5,7 @@ namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 use App\Containers\OrderSection\Order\Actions\Orders\CreateOrderAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetAllOrderAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetOrderByIdAction;
+use App\Containers\OrderSection\Order\Actions\Orders\GetWeeklyRevenueAction;
 use App\Containers\OrderSection\Order\Actions\Orders\UpdateOrderAction;
 use App\Containers\OrderSection\Order\UI\API\Transformer\OrderTransformer;
 use App\Ship\Enums\OrderStatus;
@@ -76,5 +77,12 @@ class OrderController extends Controller
         $order = $action->run($id, $data);
 
         return ApiResponse::success(new OrderTransformer()->transform($order));
+    }
+
+    public function weeklyRevenue(GetWeeklyRevenueAction $action)
+    {
+        $revenue = $action->run();
+
+        return ApiResponse::success($revenue);
     }
 }

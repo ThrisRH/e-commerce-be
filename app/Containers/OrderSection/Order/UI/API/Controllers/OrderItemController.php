@@ -1,7 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 
+use App\Containers\OrderSection\Order\Actions\OrderItems\GetOrderItemsAction;
+use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
@@ -10,9 +12,11 @@ class OrderItemController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(GetOrderItemsAction $action)
     {
-        //
+        $items = $action->run();
+
+        return ApiResponse::success($items);
     }
 
     /**

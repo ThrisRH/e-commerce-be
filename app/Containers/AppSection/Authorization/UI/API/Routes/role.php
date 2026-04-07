@@ -5,7 +5,7 @@ namespace App\Containers\AppSection\Authorization\UI\API\Routes;
 use App\Containers\AppSection\Authorization\UI\API\Controllers\AuthorizationController;
 use Illuminate\Support\Facades\Route;
 
-Route::middleware(['check.token'])->group(function () {
+Route::middleware(['auth:api', 'role:super-admin'])->group(function () {
     Route::get('api/v1/roles', [AuthorizationController::class, 'index']);
     Route::post('api/v1/roles', [AuthorizationController::class, 'store']);
 

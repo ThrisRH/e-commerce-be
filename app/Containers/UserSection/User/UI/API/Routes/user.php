@@ -5,7 +5,7 @@ namespace App\Containers\UserSection\User\UI\API\Routes;
 use App\Containers\UserSection\User\UI\API\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('api/v1/users')->group(function () {
+Route::prefix('api/v1/users')->middleware(['auth:api', 'role:super-admin'])->group(function () {
     Route::get('/customers', [UserController::class, 'getCustomers']);
     Route::get('/staffs', [UserController::class, 'getStaffs']);
     Route::post('/staffs', [UserController::class, 'createStaff']);

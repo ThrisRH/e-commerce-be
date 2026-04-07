@@ -5,12 +5,17 @@ namespace App\Containers\CatalogSection\Product\UI\API\Routes;
 use App\Containers\CatalogSection\Product\UI\API\Controllers\ProductController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('api/v1/products', [ProductController::class, 'index']);
-Route::get('api/v1/products/by-cate', [ProductController::class, 'showByCate']);
-Route::get('api/v1/products/search', [ProductController::class, 'findProductByKeyword']);
-Route::get('api/v1/products/{id}', [ProductController::class, 'show']);
-Route::post('api/v1/products', [ProductController::class, 'store']);
-Route::match(['put', 'patch'], 'api/v1/products/{id}', [ProductController::class, 'update']);
-Route::delete('api/v1/products/{id}', [ProductController::class, 'destroy']);
+Route::prefix('api/v1/products')->group(function () {
+    Route::get('/', [ProductController::class, 'index']);
+    Route::get('/by-cate', [ProductController::class, 'showByCate']);
+    Route::get('/search', [ProductController::class, 'findProductByKeyword']);
+    Route::get('/{id}', [ProductController::class, 'show']);
+
+    Route::middleware(['auth:api', 'role:super-admin|p-manager'])->group(function () {
+        Route::post('/', [ProductController::class, 'store']);
+        Route::match(['put', 'patch'], '/{id}', [ProductController::class, 'update']);
+        Route::delete('/{id}', [ProductController::class, 'destroy']);
+    });
+});
 
 // Route::middleware(['check.token'])->group(function () {});
