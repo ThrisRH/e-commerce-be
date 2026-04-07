@@ -101,6 +101,7 @@ class ProductController extends Controller
             'price' => ($isPut ? 'required' : 'sometimes').'|numeric|min:0',
             'brand_id' => ($isPut ? 'required' : 'sometimes').'|exists:brands,id',
             'category_id' => ($isPut ? 'required' : 'sometimes').'|exists:categories,id',
+            'is_active' => ($isPut ? 'required' : 'sometimes').'|boolean',
 
             'attributes' => ($isPut ? 'required' : 'sometimes').'|array',
             'attributes.*.attribute_id' => 'required_with:attributes|exists:attributes,id',

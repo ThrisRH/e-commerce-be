@@ -11,7 +11,7 @@ class HomeController extends Controller
 {
     public function index(GetCateSectionAction $action)
     {
-        $data = $action->run();
+        $data = $action->run(cate_ids: [1, 2, 5, 6, 7], limit: 5);
 
         return ApiResponse::success(new HomeTransformer()->collection($data));
     }
