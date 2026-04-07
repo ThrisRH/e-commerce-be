@@ -38,8 +38,8 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'total_amount' => 'decimal:2',
-            'shipping_fee' => 'decimal:2',
+            'total_amount' => 'integer',
+            'shipping_fee' => 'integer',
             'status' => OrderStatus::class,
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,

@@ -57,7 +57,7 @@ class GetProductDiscountPriceTask extends Task
 
         return [
             'original_price' => $originalPrice,
-            'discounted_price' => round($currentPrice, 2),
+            'discounted_price' => (int) round($currentPrice, 0),
             'applied_promotions' => $appliedPromotions,
         ];
     }

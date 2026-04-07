@@ -30,8 +30,8 @@ class Promotion extends Model
         'end_date' => 'datetime',
         'stackable' => 'boolean',
         'is_active' => 'boolean',
-        'value' => 'decimal:2',
-        'max_discount' => 'decimal:2',
+        'value' => 'integer',
+        'max_discount' => 'integer',
     ];
 
     public function products()

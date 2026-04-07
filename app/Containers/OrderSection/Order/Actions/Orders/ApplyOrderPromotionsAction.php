@@ -13,11 +13,11 @@ class ApplyOrderPromotionsAction extends Action
     /**
      * Apply promotions to a set of items and return the new total.
      * 
-     * @param float $total
+     * @param int $total
      * @param array $applicablePromotionIds
-     * @return float
+     * @return int
      */
-    public function run(float $total, array $applicablePromotionIds): float
+    public function run(int $total, array $applicablePromotionIds): int
     {
         $promotions = Promotion::whereIn('id', $applicablePromotionIds)
             ->where('is_active', true)
