@@ -4,6 +4,8 @@ namespace App\Containers\OrderSection\Order\Actions\Orders;
 
 use App\Containers\CatalogSection\Product\Tasks\Products\FindProductByIdTask;
 use App\Containers\OrderSection\Order\Tasks\OrderItems\CreateOrderItemsTask;
+use App\Containers\OrderSection\Order\Tasks\Orders\CalculateShippingFeeTask;
+use App\Containers\OrderSection\Order\Tasks\Orders\CalculateTotalQuantityTask;
 use App\Containers\OrderSection\Order\Tasks\Orders\CalculatorOrderTotalTask;
 use App\Containers\OrderSection\Order\Tasks\Orders\CheckProductStockTask;
 use App\Containers\OrderSection\Order\Tasks\Orders\CreateOrderTask;
@@ -21,6 +23,8 @@ class CreateOrderAction extends Action
         private CreateOrderTask $createOrderTask,
         private CreateOrderItemsTask $createOrderItemsTask,
         private CalculatorOrderTotalTask $calculatorOrderTotalTask,
+        private CalculateShippingFeeTask $calculateShippingFeeTask,
+        private CalculateTotalQuantityTask $calculateTotalQuantityTask,
         private GenerateOrderTrackingNumberTask $generateOrderTrackingNumberTask
     ) {}
 
@@ -30,9 +34,14 @@ class CreateOrderAction extends Action
         unset($data['items']);
 
         return DB::transaction(function () use ($data, $items) {
-            $total = $this->calculatorOrderTotalTask->run($items);
+            $totalItemsPrice = $this->calculatorOrderTotalTask->run($items);
+            $totalQuantity = $this->calculateTotalQuantityTask->run($items);
 
-            $data['total_amount'] = $total;
+            $shippingFee = $this->calculateShippingFeeTask->run($totalQuantity, $totalItemsPrice);
+
+            $data['subtotal'] = $totalItemsPrice;
+            $data['shipping_fee'] = $shippingFee;
+            $data['total'] = $totalItemsPrice + $shippingFee;
             $data['tracking_code'] = $this->generateOrderTrackingNumberTask->run();
 
             $order = $this->createOrderTask->run($data);

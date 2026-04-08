@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('slug')->unique();
             $table->text('description');
 
-            $table->decimal('price', 15, 2);
+            $table->bigInteger('price');
 
             $table->string('image_url');
             $table->integer('stock')->default(0);

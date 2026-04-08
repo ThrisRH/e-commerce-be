@@ -22,10 +22,10 @@ class UserSeeder extends Seeder
 
         // Create Admin user
         $admin = User::firstOrCreate(
-            ['email' => 'admin@admin.com'],
+            ['email' => 'admin@gmail.com'],
             [
                 'name' => 'Super Admin',
-                'password' => Hash::make('password'),
+                'password' => Hash::make('Chubaduy@123'),
                 'phone_number' => '0123456789',
             ]
         );

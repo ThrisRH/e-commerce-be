@@ -49,6 +49,7 @@ class OrderController extends Controller
             'items' => 'required|array',
             'items.*.product_id' => 'required|exists:products,id',
             'items.*.quantity' => 'required|integer',
+            'distance' => 'nullable|integer',
         ]);
 
         $order = $action->run($data);

@@ -13,8 +13,9 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'tracking_code',
-        'total_amount',
+        'subtotal',
         'shipping_fee',
+        'total',
         'status',
         'shipping_name',
         'shipping_phone',
@@ -38,8 +39,9 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'total_amount' => 'integer',
+            'subtotal' => 'integer',
             'shipping_fee' => 'integer',
+            'total' => 'integer',
             'status' => OrderStatus::class,
             'payment_method' => PaymentMethod::class,
             'payment_status' => PaymentStatus::class,

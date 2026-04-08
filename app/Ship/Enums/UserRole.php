@@ -4,8 +4,8 @@ namespace App\Ship\Enums;
 
 enum UserRole: string
 {
-    case Customer = 'customer';
-    case Admin = 'admin';
+    case Customer = 'n-customer';
+    case Admin = 'super-admin';
 
     public static function values(): array
     {

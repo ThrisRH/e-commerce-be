@@ -21,7 +21,7 @@ class GetWeeklyRevenueTask extends Task
             ->where('status', '!=', OrderStatus::Cancelled->value)
             ->select([
                 DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total_amount) as total_revenue')
+                DB::raw('SUM(total) as total_revenue')
             ])
             ->groupBy('date')
             ->orderBy('date')

@@ -23,8 +23,9 @@ return new class extends Migration
                 ->nullOnDelete();
             $table->string('tracking_code')->nullable()->unique();
 
-            $table->decimal('total_amount', 10, 2);
-            $table->decimal('shipping_fee', 10, 2)->default(0);
+            $table->bigInteger('subtotal');
+            $table->bigInteger('shipping_fee')->default(0);
+            $table->bigInteger('total');
 
             $table->string('status')->default(OrderStatus::Pending->value);
 

@@ -17,8 +17,9 @@ class OrderTransformer extends Transformer
             'id' => $order->id,
             'tracking_code' => $order->tracking_code,
 
-            'total_amount' => $order->total_amount,
+            'subtotal' => $order->subtotal,
             'shipping_fee' => $order->shipping_fee,
+            'total' => $order->total,
 
             'status' => $order->status,
             'payment_method' => $order->payment_method,
