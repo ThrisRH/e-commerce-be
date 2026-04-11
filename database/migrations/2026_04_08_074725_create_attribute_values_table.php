@@ -11,12 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('attributes', function (Blueprint $table) {
+        Schema::create('attribute_values', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('slug')->unique();
 
-            $table->enum('data_type', ['string', 'integer', 'float', 'boolean']);
+            $table->foreignId('attribute_id')->constrained()->cascadeOnDelete();
+            $table->string('value');
+            $table->string('unit')->nullable();
 
             $table->timestamps();
         });
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('attributes');
+        Schema::dropIfExists('attribute_values');
     }
 };

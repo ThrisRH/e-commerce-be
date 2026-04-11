@@ -5,7 +5,6 @@ namespace App\Containers\CatalogSection\Product\Models;
 use App\Containers\CatalogSection\Brand\Models\Brand;
 use App\Containers\CatalogSection\Category\Models\Category;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 use function Illuminate\Support\now;
 
@@ -13,26 +12,12 @@ class Product extends Model
 {
     protected $fillable = [
         'name',
-        'slug',
         'description',
-        'price',
         'image_url',
-        'stock',
         'is_active',
         'category_id',
         'brand_id',
     ];
-
-    protected static function booted()
-    {
-        static::creating(function ($product) {
-            $product->slug = Str::slug($product->name);
-        });
-
-        static::updating(function ($product) {
-            $product->slug = Str::slug($product->name);
-        });
-    }
 
     public function category()
     {
@@ -44,9 +29,14 @@ class Product extends Model
         return $this->belongsTo(Brand::class);
     }
 
-    public function productAttributes()
+    public function productSpecifications()
     {
-        return $this->hasMany(ProductAttribute::class);
+        return $this->hasMany(ProductSpecification::class);
+    }
+
+    public function productItems()
+    {
+        return $this->hasMany(ProductItem::class);
     }
 
     public function getIsNewAttribute()
