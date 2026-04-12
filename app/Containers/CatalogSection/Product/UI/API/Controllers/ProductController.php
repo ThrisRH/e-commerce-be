@@ -117,7 +117,7 @@ class ProductController extends Controller
 
         $products = $action->run($cate_id, $number ?? null);
 
-        return ApiResponse::success(new ProductTransfomer()->collection($products));
+        return ApiResponse::success((new ProductItemTransformer())->collection($products));
     }
 
     public function findProductByKeyword(Request $request, FindProductsByKeywordAction $action)
@@ -131,7 +131,7 @@ class ProductController extends Controller
 
         $products = $action->run($keyword, (int) $limit);
 
-        $transformer = app(ProductTransfomer::class);
+        $transformer = app(ProductItemTransformer::class);
 
         $products->setCollection(
             $transformer->collection($products->getCollection())

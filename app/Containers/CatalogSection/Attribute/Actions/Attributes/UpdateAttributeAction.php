@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Containers\CatalogSection\Attribute\Actions;
+namespace App\Containers\CatalogSection\Attribute\Actions\Attributes;
 
-use App\Containers\CatalogSection\Attribute\Tasks\GetAttributeByIdTask;
-use App\Containers\CatalogSection\Attribute\Tasks\UpdateAttributeTask;
+use App\Containers\CatalogSection\Attribute\Tasks\Attributes\GetAttributeByIdTask;
+use App\Containers\CatalogSection\Attribute\Tasks\Attributes\UpdateAttributeTask;
 use App\Ship\Parents\Actions\Action;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

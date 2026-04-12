@@ -2,22 +2,23 @@
 
 namespace App\Containers\CatalogSection\Attribute\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Attribute\Actions\CreateAttributeAction;
-use App\Containers\CatalogSection\Attribute\Actions\DeleteAttributeAction;
-use App\Containers\CatalogSection\Attribute\Actions\FindAttributeByIdAction;
-use App\Containers\CatalogSection\Attribute\Actions\GetAllAction;
-use App\Containers\CatalogSection\Attribute\Actions\UpdateAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\Attributes\CreateAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\Attributes\DeleteAttributeAction;
+use App\Containers\CatalogSection\Attribute\Actions\Attributes\FindAttributeByIdAction;
+use App\Containers\CatalogSection\Attribute\Actions\Attributes\GetAllAction;
+use App\Containers\CatalogSection\Attribute\Actions\Attributes\UpdateAttributeAction;
+use App\Containers\CatalogSection\Attribute\UI\API\Transformers\AttributeTransformer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
 
 class AttributeController extends Controller
 {
-    public function index(GetAllAction $getAllAction)
+    public function index(GetAllAction $action)
     {
-        $attributes = $getAllAction->run();
+        $attributes = $action->run();
 
-        return ApiResponse::success($attributes);
+        return ApiResponse::success((new AttributeTransformer)->collection($attributes), 'Attributes retrieved successfully');
     }
 
     public function store(Request $request, CreateAttributeAction $action)
@@ -30,14 +31,16 @@ class AttributeController extends Controller
             'is_required' => 'boolean',
         ]);
 
-        return ApiResponse::success($action->run($data));
+        $attribute = $action->run($data);
+
+        return ApiResponse::success((new AttributeTransformer)->transform($attribute), 'Attribute created successfully');
     }
 
     public function show($id, FindAttributeByIdAction $action)
     {
         $attribute = $action->run($id);
 
-        return ApiResponse::success($attribute);
+        return ApiResponse::success((new AttributeTransformer)->transform($attribute), 'Attribute found successfully');
     }
 
     public function update(Request $request, $id, UpdateAttributeAction $action)
@@ -49,11 +52,15 @@ class AttributeController extends Controller
             'is_required' => 'sometimes|boolean',
         ]);
 
-        return ApiResponse::success($action->run($id, $data));
+        $attribute = $action->run($id, $data);
+
+        return ApiResponse::success((new AttributeTransformer)->transform($attribute), 'Attribute updated successfully');
     }
 
     public function destroy($id, DeleteAttributeAction $action)
     {
-        return ApiResponse::success($action->run($id));
+        $action->run($id);
+
+        return ApiResponse::success(null, 'Attribute deleted successfully');
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Containers\CatalogSection\Attribute\Actions;
+namespace App\Containers\CatalogSection\Attribute\Actions\Attributes;
 
-use App\Containers\CatalogSection\Attribute\Tasks\GetAttributeByIdTask;
+use App\Containers\CatalogSection\Attribute\Tasks\Attributes\GetAttributeByIdTask;
 use App\Ship\Parents\Actions\Action;
 
 class FindAttributeByIdAction extends Action

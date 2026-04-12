@@ -11,6 +11,7 @@ use App\Containers\CatalogSection\Category\Actions\Categories\FindProductByCateA
 use App\Containers\CatalogSection\Category\Actions\Categories\GetAllCategoriesAction;
 use App\Containers\CatalogSection\Category\Actions\Categories\UpdateCategoryAction;
 use App\Containers\CatalogSection\Category\UI\API\Transformers\CategoryTransformer;
+use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductItemTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
@@ -89,7 +90,7 @@ class CategoryController extends Controller
     {
         $products = $action->run($id, $request->limit ?? 25);
 
-        $transformer = app(ProductTransfomer::class);
+        $transformer = app(ProductItemTransformer::class);
 
         $products->setCollection(
             $transformer->collection($products->getCollection())

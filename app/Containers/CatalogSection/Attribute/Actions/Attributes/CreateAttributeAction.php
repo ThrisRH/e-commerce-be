@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Containers\CatalogSection\Attribute\Actions;
+namespace App\Containers\CatalogSection\Attribute\Actions\Attributes;
 
-use App\Containers\CatalogSection\Attribute\Tasks\CreateAttributeTask;
+use App\Containers\CatalogSection\Attribute\Tasks\Attributes\CreateAttributeTask;
 use App\Ship\Parents\Actions\Action;
 
 class CreateAttributeAction extends Action

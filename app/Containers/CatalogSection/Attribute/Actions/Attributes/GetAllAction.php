@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Containers\CatalogSection\Attribute\Actions;
+namespace App\Containers\CatalogSection\Attribute\Actions\Attributes;
 
-use App\Containers\CatalogSection\Attribute\Tasks\GetAllAttributesTask;
+use App\Containers\CatalogSection\Attribute\Tasks\Attributes\GetAllAttributesTask;
 use App\Ship\Parents\Actions\Action;
 
 class GetAllAction extends Action
