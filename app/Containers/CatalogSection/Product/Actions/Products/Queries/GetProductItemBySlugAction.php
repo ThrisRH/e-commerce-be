@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Actions\Products;
+namespace App\Containers\CatalogSection\Product\Actions\Products\Queries;
 
 use App\Containers\CatalogSection\Product\Tasks\Products\NewProductFlow\GetProductItemBySlugTask;
 use App\Containers\CatalogSection\Product\Tasks\Products\NewProductFlow\GetVariantBySlugAndSkuTask;

@@ -2,17 +2,21 @@
 
 namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 
-use App\Containers\CatalogSection\Product\Actions\Products\CreateProductAction;
-use App\Containers\CatalogSection\Product\Actions\Products\DeleteProductAction;
-use App\Containers\CatalogSection\Product\Actions\Products\FindProductByIdAction;
-use App\Containers\CatalogSection\Product\Actions\Products\FindProductsByKeywordAction;
-use App\Containers\CatalogSection\Product\Actions\Products\GetAllByCateAction;
-use App\Containers\CatalogSection\Product\Actions\Products\GetAllProductsAction;
-use App\Containers\CatalogSection\Product\Actions\Products\GetProductItemBySlugAction;
-use App\Containers\CatalogSection\Product\Actions\Products\GetProductItemDetailForAdminAction;
-use App\Containers\CatalogSection\Product\Actions\Products\UpdateProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Commands\CreateProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Commands\DeleteProductAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Commands\UpdateProductAction;
+use App\Containers\CatalogSection\Product\Actions\ProductItem\Commands\UpdateProductItemAction;
+use App\Containers\CatalogSection\Product\Actions\ProductVariant\Commands\UpdateProductVariantAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\FindProductByIdAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\FindProductsByKeywordAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetAllByCateAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetAllProductsAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetProductItemBySlugAction;
+use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetProductItemDetailForAdminAction;
 use App\Containers\CatalogSection\Product\Actions\ProductVariant\CreateProductVariantAction;
 use App\Containers\CatalogSection\Product\Actions\ProductVariant\DeleteProductVariantAction;
+use App\Containers\CatalogSection\Product\Tasks\Products\FindProductItemByIdTask;
+use App\Containers\CatalogSection\Product\Tasks\Products\FindProductVariantByIdTask;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductDetailAdminTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductDetailTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductItemTransformer;
@@ -141,39 +145,59 @@ class ProductController extends Controller
         $sku = $request->query('sku');
         $product = $action->run($slug, $sku);
 
-        // dd($product);
-
         return ApiResponse::success(new ProductDetailTransformer()->transform($product));
     }
 
-    public function update(Request $request, UpdateProductAction $updateAction, FindProductByIdAction $findAction)
+    public function update($id, Request $request, UpdateProductAction $updateAction, FindProductByIdAction $findAction)
     {
-        // $product = $findAction->run($request['id']);
+        $product = $findAction->run($id);
 
-        // $isPut = $request->isMethod('put');
+        $data = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'description' => 'sometimes|string',
+            'image_url' => 'sometimes|string|url',
+            'brand_id' => 'sometimes|exists:brands,id',
+            'category_id' => 'sometimes|exists:categories,id',
+            'is_active' => 'sometimes|boolean',
+            'specs' => 'nullable|array',
+            'specs.*.attribute_id' => 'required_with:specs|exists:attributes,id',
+            'specs.*.value' => 'required_with:specs|string',
+            'specs.*.unit' => 'nullable|string',
+        ]);
 
-        // $data = $request->validate([
-        //     'name' => ($isPut ? 'required' : 'sometimes').'|string|max:255',
-        //     'description' => ($isPut ? 'required' : 'sometimes').'|string',
-        //     'image_url' => ($isPut ? 'required' : 'sometimes').'|string|url',
-        //     'stock' => ($isPut ? 'required' : 'sometimes').'|integer|min:0',
-        //     'price' => ($isPut ? 'required' : 'sometimes').'|numeric|min:0',
-        //     'brand_id' => ($isPut ? 'required' : 'sometimes').'|exists:brands,id',
-        //     'category_id' => ($isPut ? 'required' : 'sometimes').'|exists:categories,id',
-        //     'is_active' => ($isPut ? 'required' : 'sometimes').'|boolean',
+        $product = $updateAction->run($product, $data);
 
-        //     'attributes' => ($isPut ? 'required' : 'sometimes').'|array',
-        //     'attributes.*.attribute_id' => 'required_with:attributes|exists:attributes,id',
-        //     'attributes.*.value' => 'required_with:attributes',
-        // ]);
+        return ApiResponse::success($product, 'Product basic info updated successfully');
+    }
 
-        // if (empty($data)) {
-        //     return ApiResponse::error('No data provided', Response::HTTP_BAD_REQUEST);
-        // }
+    public function updateProductItem($id, Request $request, UpdateProductItemAction $action, FindProductItemByIdTask $findTask)
+    {
+        $item = $findTask->run($id);
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+        ]);
 
-        // $product = $updateAction->run($product, $data);
+        $item = $action->run($item, $data);
 
-        // return ApiResponse::success(new ProductTransfomer()->transform($product), 'Product updated successfully');
+        return ApiResponse::success($item, 'Product item updated successfully');
+    }
+
+    public function updateProductVariant($id, Request $request, UpdateProductVariantAction $action, FindProductVariantByIdTask $findTask)
+    {
+        $variant = $findTask->run($id);
+        $data = $request->validate([
+            'price' => 'sometimes|numeric|min:0',
+            'stock' => 'sometimes|integer|min:0',
+            'image_url' => 'sometimes|string|url',
+            'sku' => 'sometimes|string|unique:product_variants,sku,'. $id,
+            'is_default' => 'sometimes|boolean',
+            'attributes' => 'nullable|array',
+            'attributes.*.attribute_value_id' => 'required_with:attributes|exists:attribute_values,id',
+        ]);
+
+        $variant = $action->run($variant, $data);
+
+        return ApiResponse::success($variant, 'Product variant updated successfully');
     }
 
     public function destroy($id, DeleteProductAction $action)

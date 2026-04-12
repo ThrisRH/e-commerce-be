@@ -42,6 +42,7 @@ class ProductDetailTransformer extends Transformer
                             'attribute_value' => $variant->variantValues->map(function ($variantValue) {
                                 return [
                                     'attribute_id' => $variantValue->attributeValue->attribute_id,
+                                    'attribute_name' => $variantValue->attributeValue->attribute->name,
                                     'attribute_value_id' => $variantValue->attribute_value_id,
                                     'attribute_value_name' => $variantValue->attributeValue->value,
                                     'attribute_unit' => $variantValue->attributeValue->unit,

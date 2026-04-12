@@ -17,6 +17,8 @@ Route::prefix('api/v1/products')->group(function () {
         Route::post('/variants', [ProductController::class, 'storeVariant']);
         Route::get('/admin/{slug}', [ProductController::class, 'adminIndex']);
         Route::match(['put', 'patch'], '/{id}', [ProductController::class, 'update']);
+        Route::patch('/items/{id}', [ProductController::class, 'updateProductItem']);
+        Route::patch('/variants/{id}', [ProductController::class, 'updateProductVariant']);
         Route::delete('/{id}', [ProductController::class, 'destroy']);
         Route::delete('/variants/{id}', [ProductController::class, 'deleteProductVariant']);
     });

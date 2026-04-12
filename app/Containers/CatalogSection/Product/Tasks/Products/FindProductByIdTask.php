@@ -9,7 +9,7 @@ class FindProductByIdTask extends Task
 {
     public function run($id)
     {
-        $product = Product::with(['category', 'brand', 'product', 'variants'])
+        $product = Product::with(['category', 'brand', 'productItems.variants.variantValues'])
             ->findOrFail($id);
 
         return $product;

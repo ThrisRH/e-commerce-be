@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Actions\Products;
+namespace App\Containers\CatalogSection\Product\Actions\Products\Commands;
 
 use App\Containers\CatalogSection\Product\Tasks\Products\DeleteProductTask;
 use App\Ship\Parents\Actions\Action;

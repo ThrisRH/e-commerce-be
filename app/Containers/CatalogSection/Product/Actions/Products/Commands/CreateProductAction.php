@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Containers\CatalogSection\Product\Actions\Products;
+namespace App\Containers\CatalogSection\Product\Actions\Products\Commands;
 
+use App\Containers\CatalogSection\Category\Tasks\CategoryAttributes\ValidateCategoryAttributesTask;
 use App\Containers\CatalogSection\Product\Tasks\Products\NewProductFlow\CreateBaseProductTask;
 use App\Containers\CatalogSection\Product\Tasks\Products\NewProductFlow\CreateProductItemTask;
 use App\Containers\CatalogSection\Product\Tasks\Products\NewProductFlow\CreateProductSpecificationTask;
@@ -19,17 +20,20 @@ class CreateProductAction extends Action
         private GenerateSKUTask $generateSKUTask,
         private CreateProductVariantTask $createProductVariantTask,
         private CreateProductVariantValueTask $createProductVariantValueTask,
-        private CreateProductSpecificationTask $createProductSpecificationTask
+        private CreateProductSpecificationTask $createProductSpecificationTask,
+        private ValidateCategoryAttributesTask $validateCategoryAttributesTask
     ) {}
 
     public function run(array $data)
     {
         return DB::transaction(function () use ($data) {
-
             $baseProduct = $this->createBaseProductTask->run($data);
+
+            $this->validateCategoryAttributesTask->run($data['category_id'], $data['specs']);
 
             foreach ($data['specs'] as $spec) {
                 $spec['product_id'] = $baseProduct->id;
+
                 $this->createProductSpecificationTask->run($spec);
             }
 
