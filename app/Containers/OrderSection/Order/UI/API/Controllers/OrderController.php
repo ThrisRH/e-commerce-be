@@ -3,10 +3,10 @@
 namespace App\Containers\OrderSection\Order\UI\API\Controllers;
 
 use App\Containers\OrderSection\Order\Actions\Orders\CreateOrderAction;
-use App\Containers\OrderSection\Order\Actions\Orders\SearchOrdersAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetAllOrderAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetOrderByIdAction;
 use App\Containers\OrderSection\Order\Actions\Orders\GetWeeklyRevenueAction;
+use App\Containers\OrderSection\Order\Actions\Orders\SearchOrdersAction;
 use App\Containers\OrderSection\Order\Actions\Orders\UpdateOrderAction;
 use App\Containers\OrderSection\Order\UI\API\Transformer\OrderTransformer;
 use App\Ship\Enums\OrderStatus;
@@ -43,14 +43,27 @@ class OrderController extends Controller
             'user_id' => 'nullable|exists:users,id',
             'shipping_name' => 'required|string',
             'shipping_phone' => 'required|string',
-            'shipping_address' => 'required|string',
             'payment_method' => 'required|string',
             'note' => 'nullable|string',
             'items' => 'required|array',
-            'items.*.product_id' => 'required|exists:products,id',
-            'items.*.quantity' => 'required|integer',
-            'distance' => 'nullable|integer',
+            'items.*.slug' => 'required|string|exists:product_items,slug',
+            'items.*.sku' => 'required|string|exists:product_variants,sku',
+            'items.*.quantity' => 'required|integer|min:1',
+
+            'from.province' => 'nullable|string',
+            'from.district' => 'nullable|string',
+            'from.ward' => 'nullable|string',
+            'to.province' => 'required|string',
+            'to.district' => 'required|string',
+            'to.ward' => 'nullable|string',
+            'shipping_method_id' => 'required|integer',
         ]);
+
+        $data['from'] = [
+            'province' => 'Hồ Chí Minh',
+            'district' => 'Quận 1',
+            'ward' => 'Phường Bến Nghé',
+        ];
 
         $order = $action->run($data);
 

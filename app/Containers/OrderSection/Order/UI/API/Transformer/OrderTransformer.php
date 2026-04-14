@@ -32,16 +32,26 @@ class OrderTransformer extends Transformer
             'note' => $order->note,
 
             'items' => $order->orderItems->map(function ($item) {
+                $price = $item->variant ? $item->variant->price : ($item->product->price ?? 0);
                 return [
                     'id' => $item->id,
                     'product_id' => $item->product_id,
+                    'variant_id' => $item->product_variant_id,
 
-                    'product_name' => $item->product->name ?? null,
-                    'product_image' => $item->product->image_url ?? null,
+                    'product_name' => $item->variant?->productItem?->name ?? ($item->product->name ?? null),
+                    'product_image' => $item->variant?->image_url ?? ($item->product->image_url ?? null),
+                    'sku' => $item->variant?->sku,
+                    'slug' => $item->variant?->productItem?->slug,
 
                     'quantity' => $item->quantity,
-                    'price' => $item->product->price,
-                    'total' => $item->product->price * $item->quantity,
+                    'price' => (float) $price,
+                    'total' => (float) ($price * $item->quantity),
+                    'attributes' => $item->variant?->variantValues->map(function ($value) {
+                        return [
+                            'name' => $value->attributeValue?->attribute?->name,
+                            'value' => $value->attributeValue?->value,
+                        ];
+                    }),
                 ];
             }),
 

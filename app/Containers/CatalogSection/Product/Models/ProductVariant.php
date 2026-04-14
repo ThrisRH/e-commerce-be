@@ -13,10 +13,18 @@ class ProductVariant extends Model
         'price',
         'stock',
         'is_default',
+        'weight',
+        'length',
+        'width',
+        'height',
     ];
 
     protected $casts = [
         'is_default' => 'boolean',
+        'weight' => 'float',
+        'length' => 'float',
+        'width' => 'float',
+        'height' => 'float',
     ];
 
     public function productItem()
