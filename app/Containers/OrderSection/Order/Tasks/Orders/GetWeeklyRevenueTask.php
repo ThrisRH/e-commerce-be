@@ -21,22 +21,21 @@ class GetWeeklyRevenueTask extends Task
             ->where('status', '!=', OrderStatus::Cancelled->value)
             ->select([
                 DB::raw('DATE(created_at) as date'),
-                DB::raw('SUM(total) as total_revenue')
+                DB::raw('SUM(total) as total_revenue'),
             ])
             ->groupBy('date')
             ->orderBy('date')
             ->get();
 
-        // Ensure all days of the week are present with 0 if no revenue
         $days = [];
         for ($date = $startOfWeek->copy(); $date->lte($endOfWeek); $date->addDay()) {
             $formattedDate = $date->toDateString();
             $dayRevenue = $revenue->firstWhere('date', $formattedDate);
-            
+
             $days[] = [
                 'date' => $formattedDate,
                 'day_name' => $date->format('l'), // e.g. Monday, Tuesday
-                'revenue' => $dayRevenue ? (int) $dayRevenue->total_revenue : 0
+                'revenue' => $dayRevenue ? (int) $dayRevenue->total_revenue : 0,
             ];
         }
 

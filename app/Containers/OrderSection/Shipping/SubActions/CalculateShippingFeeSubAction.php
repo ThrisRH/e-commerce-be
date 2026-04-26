@@ -3,6 +3,7 @@
 namespace App\Containers\OrderSection\Shipping\SubActions;
 
 use App\Containers\OrderSection\Shipping\Tasks\ShippingFee\CalculateDistanceTimeTask;
+use App\Containers\OrderSection\Shipping\Tasks\ShippingFee\CalculatePhysicalWeightTask;
 use App\Containers\OrderSection\Shipping\Tasks\ShippingFee\CalculateShippingFeeTask;
 use App\Containers\OrderSection\Shipping\Tasks\ShippingFee\GetCoordinatesTask;
 use App\Containers\OrderSection\Shipping\Tasks\ShippingMethod\FindShippingMethodByIdTask;
@@ -19,13 +20,16 @@ class CalculateShippingFeeSubAction extends Action
         private FindShippingMethodByIdTask $findShippingMethodByIdTask,
         private FindShippingRateTask $findShippingRateTask,
         private CalculateShippingFeeTask $calculateShippingFeeTask,
+        private CalculatePhysicalWeightTask $calculatePhysicalWeightTask,
     ) {}
 
     public function run(array $data)
     {
+        $fromAddress = $data['from']['province'].', '.$data['from']['district'].', '.$data['from']['ward'] ?? '';
+        $toAddress = $data['to']['province'].', '.$data['to']['district'].', '.$data['to']['ward'] ?? '';
 
-        $fromCoords = $this->getCoordinatesTask->run($data['from']['province'].', '.$data['from']['district'].', '.$data['from']['ward'] ?? '');
-        $toCoords = $this->getCoordinatesTask->run($data['to']['province'].', '.$data['to']['district'].', '.$data['to']['ward'] ?? '');
+        $fromCoords = $this->getCoordinatesTask->run($fromAddress);
+        $toCoords = $this->getCoordinatesTask->run($toAddress);
 
         if (! $fromCoords || ! $toCoords) {
             return [
@@ -40,22 +44,22 @@ class CalculateShippingFeeSubAction extends Action
         $expectedTimeInHours = round($distanceTime['expected_time'] / 3600, 2);
 
         $shippingZone = $this->getShippingZoneByAddressTask->run($data['to']['province'], $data['to']['district']);
-
         if (! $shippingZone) {
             throw new \Exception('Shipping zone not found');
         }
 
         $shippingMethod = $this->findShippingMethodByIdTask->run($data['shipping_method_id']);
-
         if (! $shippingMethod) {
             throw new \Exception('Shipping method not found');
         }
 
         $shippingRate = $this->findShippingRateTask->run($shippingZone->id, $shippingMethod->id);
-
         if (! $shippingRate) {
             throw new \Exception('Shipping rate not found');
         }
+
+        $items = $data['items'] ?? [];
+        $physicalSpec = $this->calculatePhysicalWeightTask->run($items, $shippingMethod->volumetric_divisor ?? 5000);
 
         $shippingInfo = [
             'distance' => round($distanceInKm, 2),
@@ -65,6 +69,10 @@ class CalculateShippingFeeSubAction extends Action
             'base_fee' => $shippingRate->base_fee,
             'max_fee' => $shippingRate->max_fee,
             'min_fee' => $shippingRate->min_fee,
+            'chargeable_weight' => $physicalSpec['chargeable_weight'],
+            'base_weight' => $shippingRate->base_weight,
+            'step_weight' => $shippingRate->step_weight,
+            'step_fee' => $shippingRate->step_fee,
             'density_factor' => $shippingZone->density_factor,
             'estimated_stops' => $shippingZone->estimated_stops,
         ];
@@ -73,6 +81,7 @@ class CalculateShippingFeeSubAction extends Action
 
         return [
             'shipping_info' => $shippingInfo,
+            'physical_spec' => $physicalSpec,
             'fee' => round($totalFee, 0),
         ];
     }

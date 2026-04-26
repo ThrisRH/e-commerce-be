@@ -9,7 +9,7 @@ class ShippingZoneArea extends Model
     protected $fillable = [
         'shipping_zone_id',
         'province',
-        'distince', // matching typo in migration
+        'distince',
         'ward',
     ];
 

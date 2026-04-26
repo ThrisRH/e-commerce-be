@@ -9,7 +9,7 @@ class CreateOrderTask extends Task
 {
     public function run(array $data)
     {
-        $data['shipping_address'] = $data['to']['ward'].', '.$data['to']['district'].', '.$data['to']['province'];
+        $data['shipping_address'] = $data['to']['address'].', '.$data['to']['ward'].', '.$data['to']['district'].', '.$data['to']['province'];
 
         return Order::create($data);
     }

@@ -43,4 +43,34 @@ class Product extends Model
     {
         return $this->created_at >= now()->subDays(30);
     }
+
+    public function getPriceAttribute()
+    {
+        return $this->productItems->first()?->defaultVariant?->price ?? 0;
+    }
+
+    public function getSlugAttribute()
+    {
+        return $this->productItems->first()?->slug ?? '';
+    }
+
+    public function getStockAttribute()
+    {
+        return $this->productItems->sum(function ($item) {
+            return $item->variants->sum('stock');
+        });
+    }
+
+    public function getSkuAttribute()
+    {
+        return $this->productItems->first()?->defaultVariant?->sku ?? '';
+    }
+
+    public function getBasicInfoAttribute()
+    {
+        return [
+            'slug' => $this->slug,
+            'name' => $this->name,
+        ];
+    }
 }

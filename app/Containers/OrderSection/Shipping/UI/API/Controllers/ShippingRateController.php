@@ -7,7 +7,6 @@ use App\Containers\OrderSection\Shipping\Actions\ShippingRate\DeleteShippingRate
 use App\Containers\OrderSection\Shipping\Actions\ShippingRate\FindShippingRateByIdAction;
 use App\Containers\OrderSection\Shipping\Actions\ShippingRate\GetAllShippingRatesAction;
 use App\Containers\OrderSection\Shipping\Actions\ShippingRate\UpdateShippingRateAction;
-use App\Containers\OrderSection\Shipping\Models\ShippingRate;
 use App\Containers\OrderSection\Shipping\UI\API\Transformer\ShippingRateTransformer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
@@ -52,7 +51,7 @@ class ShippingRateController extends Controller
         return ApiResponse::success($transformer->transform($rate));
     }
 
-    public function update(Request $request, UpdateShippingRateAction $action, ShippingRate $shippingRate)
+    public function update(Request $request, UpdateShippingRateAction $action, int $id)
     {
         $data = $request->validate([
             'shipping_zone_id' => 'sometimes|integer|exists:shipping_zones,id',
@@ -60,18 +59,20 @@ class ShippingRateController extends Controller
             'base_fee' => 'sometimes|integer|min:0',
             'max_fee' => 'nullable|integer|min:0',
             'min_fee' => 'nullable|integer|min:0',
+            'base_weight' => 'sometimes|numeric|min:0',
+            'step_weight' => 'sometimes|numeric|min:0',
         ]);
 
-        $rate = $action->run($shippingRate, $data);
+        $rate = $action->run($id, $data);
         $transformer = new ShippingRateTransformer;
 
         return ApiResponse::success($transformer->transform($rate));
     }
 
-    public function destroy(DeleteShippingRateAction $action, ShippingRate $shippingRate)
+    public function destroy(DeleteShippingRateAction $action, int $id)
     {
-        $action->run($shippingRate);
+        $action->run($id);
 
-        return ApiResponse::success(null, 204);
+        return ApiResponse::success(null, 'Shipping rate deleted successfully');
     }
 }

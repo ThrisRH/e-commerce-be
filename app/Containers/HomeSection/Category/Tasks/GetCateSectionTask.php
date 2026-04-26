@@ -10,7 +10,11 @@ class GetCateSectionTask extends Task
     public function run(?array $cate_ids = null, int $limit = 10)
     {
         return Category::with(['products' => function ($q) use ($limit) {
-            $q->latest()->take($limit);
+            $q->latest()
+              ->with(['productItems' => function($qItem) {
+                  $qItem->with(['defaultVariant']);
+              }])
+              ->take($limit);
         }])->whereIn('id', $cate_ids)->get();
     }
 }

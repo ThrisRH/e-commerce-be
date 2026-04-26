@@ -11,9 +11,9 @@ Route::prefix('api/v1/shipping')->group(function () {
     Route::middleware(['auth:api', 'role:super-admin|p-manager'])->group(function () {
         Route::get('/rates', [ShippingRateController::class, 'index']);
         Route::post('/rates', [ShippingRateController::class, 'store']);
-        Route::get('/rates/{shippingRate}', [ShippingRateController::class, 'show']);
-        Route::put('/rates/{shippingRate}', [ShippingRateController::class, 'update']);
-        Route::patch('/rates/{shippingRate}', [ShippingRateController::class, 'update']);
-        Route::delete('/rates/{shippingRate}', [ShippingRateController::class, 'destroy']);
+        Route::get('/rates/{id}', [ShippingRateController::class, 'show']);
+        Route::put('/rates/{id}', [ShippingRateController::class, 'update']);
+        Route::patch('/rates/{id}', [ShippingRateController::class, 'update']);
+        Route::delete('/rates/{id}', [ShippingRateController::class, 'destroy']);
     });
 });

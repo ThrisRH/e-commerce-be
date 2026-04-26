@@ -16,6 +16,10 @@ class UpdateProductVariantTask extends Task
             'price' => $data['price'] ?? $productVariant->price,
             'stock' => $data['stock'] ?? $productVariant->stock,
             'is_default' => $data['is_default'] ?? $productVariant->is_default,
+            'weight' => $data['weight'] ?? $productVariant->weight,
+            'length' => $data['length'] ?? $productVariant->length,
+            'width' => $data['width'] ?? $productVariant->width,
+            'height' => $data['height'] ?? $productVariant->height,
         ]));
 
         return $productVariant;

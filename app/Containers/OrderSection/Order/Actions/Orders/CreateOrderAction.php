@@ -51,6 +51,7 @@ class CreateOrderAction extends Action
                 'from' => $data['from'],
                 'to' => $data['to'],
                 'shipping_method_id' => $data['shipping_method_id'],
+                'items' => $items,
             ];
 
             $order = $this->createOrderTask->run($data);
@@ -76,13 +77,10 @@ class CreateOrderAction extends Action
 
             if ($order['subtotal'] < 4000000) {
                 $shippingFee = $this->calculateShippingFeeSubAction->run($shippingInfo);
-                dd($shippingFee);
             }
 
             $order['shipping_fee'] = 0;
             $order['total'] = $order['subtotal'];
-
-            dd($order);
 
             return $order;
         });

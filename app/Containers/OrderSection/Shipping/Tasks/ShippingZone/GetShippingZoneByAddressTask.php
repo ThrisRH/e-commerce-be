@@ -2,6 +2,7 @@
 
 namespace App\Containers\OrderSection\Shipping\Tasks\ShippingZone;
 
+use App\Containers\OrderSection\Shipping\Models\ShippingZone;
 use App\Containers\OrderSection\Shipping\Models\ShippingZoneArea;
 use App\Ship\Parents\Tasks\Task;
 
@@ -18,6 +19,10 @@ class GetShippingZoneByAddressTask extends Task
 
         $area = $query->first();
 
-        return $area ? $area->shippingZone : null;
+        if (! $area) {
+            return ShippingZone::find(1);
+        }
+
+        return $area->shippingZone;
     }
 }

@@ -56,6 +56,7 @@ class OrderController extends Controller
             'to.province' => 'required|string',
             'to.district' => 'required|string',
             'to.ward' => 'nullable|string',
+            'to.address' => 'nullable|string',
             'shipping_method_id' => 'required|integer',
         ]);
 

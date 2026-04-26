@@ -12,9 +12,6 @@ class CalculateShippingFeeTask extends Task
         $t = $shippingInfo['time_coefficient'];
         $D = $shippingInfo['distance'];
         $d = $shippingInfo['distance_coefficient'];
-        $BaseFee = $shippingInfo['base_fee'];
-        $MaxFee = $shippingInfo['max_fee'];
-        $MinFee = $shippingInfo['min_fee'];
         $density_factor = $shippingInfo['density_factor'];
         $estimated_stops = $shippingInfo['estimated_stops'];
 
@@ -26,13 +23,30 @@ class CalculateShippingFeeTask extends Task
         }
 
         $CostCoefficient = $TC / $ZoneEfficiency;
-        $TotalFee = ($CostCoefficient * 5000) + $BaseFee;
+        $ServiceFee = ($CostCoefficient * 5000);
 
-        if ($TotalFee > $MaxFee) {
+        $ChargeableWeight = $shippingInfo['chargeable_weight'] ?? 0;
+        $BaseWeight = $shippingInfo['base_weight'] ?? 2;
+        $StepWeight = $shippingInfo['step_weight'] ?? 0.5;
+        $StepFee = $shippingInfo['step_fee'] ?? 0;
+
+        $WeightFee = 0;
+        if ($ChargeableWeight > $BaseWeight) {
+            $extra_steps = ceil(($ChargeableWeight - $BaseWeight) / ($StepWeight ?: 1));
+            $WeightFee = $extra_steps * $StepFee;
+        }
+
+        $BaseFee = $shippingInfo['base_fee'] ?? 0;
+        $TotalFee = $BaseFee + $ServiceFee + $WeightFee;
+
+        $MaxFee = $shippingInfo['max_fee'];
+        $MinFee = $shippingInfo['min_fee'];
+
+        if ($TotalFee > $MaxFee && $MaxFee > 0) {
             $TotalFee = $MaxFee;
         }
 
-        if ($TotalFee < $MinFee) {
+        if ($TotalFee < $MinFee && $MinFee > 0) {
             $TotalFee = $MinFee;
         }
 

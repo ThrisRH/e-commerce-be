@@ -12,10 +12,6 @@ class ApplyOrderPromotionsAction extends Action
 
     /**
      * Apply promotions to a set of items and return the new total.
-     * 
-     * @param int $total
-     * @param array $applicablePromotionIds
-     * @return int
      */
     public function run(int $total, array $applicablePromotionIds): int
     {
@@ -29,14 +25,11 @@ class ApplyOrderPromotionsAction extends Action
         $currentTotal = $total;
 
         foreach ($promotions as $promotion) {
-            // Resolve the right strategy (Fixed, Percentage, Holiday)
             $strategy = $this->strategyResolverTask->run($promotion);
-            
-            // Apply it!
+
             $currentTotal = $strategy->apply($currentTotal, $promotion);
 
-            // If not stackable, stop here
-            if (!$promotion->stackable) {
+            if (! $promotion->stackable) {
                 break;
             }
         }

@@ -2,7 +2,7 @@
 
 namespace App\Containers\OrderSection\Shipping\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use App\Ship\Parents\Models\Model;
 
 class ShippingRate extends Model
 {

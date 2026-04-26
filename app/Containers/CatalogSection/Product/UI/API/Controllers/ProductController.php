@@ -2,17 +2,17 @@
 
 namespace App\Containers\CatalogSection\Product\UI\API\Controllers;
 
+use App\Containers\CatalogSection\Product\Actions\ProductItem\Commands\UpdateProductItemAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Commands\CreateProductAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Commands\DeleteProductAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Commands\UpdateProductAction;
-use App\Containers\CatalogSection\Product\Actions\ProductItem\Commands\UpdateProductItemAction;
-use App\Containers\CatalogSection\Product\Actions\ProductVariant\Commands\UpdateProductVariantAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\FindProductByIdAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\FindProductsByKeywordAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetAllByCateAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetAllProductsAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetProductItemBySlugAction;
 use App\Containers\CatalogSection\Product\Actions\Products\Queries\GetProductItemDetailForAdminAction;
+use App\Containers\CatalogSection\Product\Actions\ProductVariant\Commands\UpdateProductVariantAction;
 use App\Containers\CatalogSection\Product\Actions\ProductVariant\CreateProductVariantAction;
 use App\Containers\CatalogSection\Product\Actions\ProductVariant\DeleteProductVariantAction;
 use App\Containers\CatalogSection\Product\Tasks\Products\FindProductItemByIdTask;
@@ -20,7 +20,6 @@ use App\Containers\CatalogSection\Product\Tasks\Products\FindProductVariantByIdT
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductDetailAdminTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductDetailTransformer;
 use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductItemTransformer;
-use App\Containers\CatalogSection\Product\UI\API\Transformers\ProductTransfomer;
 use App\Ship\Helper\ApiResponse;
 use App\Ship\Parents\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -96,6 +95,10 @@ class ProductController extends Controller
             'stock' => 'required|integer|min:0',
             'attributes' => 'required|array|min:1',
             'attributes.*.attribute_value_id' => 'required|exists:attribute_values,id',
+            'weight' => 'nullable|numeric|min:0',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'height' => 'nullable|numeric|min:0',
         ]);
 
         $variant = $action->run($data);
@@ -117,7 +120,7 @@ class ProductController extends Controller
 
         $products = $action->run($cate_id, $number ?? null);
 
-        return ApiResponse::success((new ProductItemTransformer())->collection($products));
+        return ApiResponse::success((new ProductItemTransformer)->collection($products));
     }
 
     public function findProductByKeyword(Request $request, FindProductsByKeywordAction $action)
@@ -189,10 +192,14 @@ class ProductController extends Controller
             'price' => 'sometimes|numeric|min:0',
             'stock' => 'sometimes|integer|min:0',
             'image_url' => 'sometimes|string|url',
-            'sku' => 'sometimes|string|unique:product_variants,sku,'. $id,
+            'sku' => 'sometimes|string|unique:product_variants,sku,'.$id,
             'is_default' => 'sometimes|boolean',
             'attributes' => 'nullable|array',
             'attributes.*.attribute_value_id' => 'required_with:attributes|exists:attribute_values,id',
+            'weight' => 'nullable|numeric|min:0',
+            'length' => 'nullable|numeric|min:0',
+            'width' => 'nullable|numeric|min:0',
+            'height' => 'nullable|numeric|min:0',
         ]);
 
         $variant = $action->run($variant, $data);

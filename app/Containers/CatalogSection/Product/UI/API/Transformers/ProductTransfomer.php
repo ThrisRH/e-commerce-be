@@ -17,14 +17,15 @@ class ProductTransfomer
             'id' => $product->id,
             'name' => $product->name,
             'slug' => $product->slug,
+            'sku' => $product->sku,
+            'basic_info' => $product->basic_info,
             'description' => $product->description,
             'image_url' => $product->image_url,
             'stock' => $product->stock,
             'original_price' => (float) $product->price,
-            'discounted_price' => app(GetProductDiscountPriceTask::class)->run($product)['discounted_price'],
+            'discounted_price' => (float) $product->price,
             'price' => $product->price,
             'is_new' => $product->is_new,
-
             'is_active' => $product->is_active,
 
             'category' => [
@@ -37,12 +38,12 @@ class ProductTransfomer
                 'name' => $product->brand?->name,
             ],
 
-            'attributes' => $product->productAttributes->map(function ($item) {
+            'attributes' => $product->productSpecifications->map(function ($item) {
                 return [
                     'id' => $item->attribute->id,
                     'name' => $item->attribute->name,
                     'value' => $item->value,
-                    'unit' => $item->attribute->unit,
+                    'unit' => $item->unit ?? $item->attribute->unit,
                 ];
             })->toArray(),
 

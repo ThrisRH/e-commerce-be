@@ -25,7 +25,7 @@ class AttributeController extends Controller
     {
         $data = $request->validate([
             'name' => 'required|string|max:255|unique:attributes,name',
-            'data_type' => 'required|in:string,integer,float,boolean',
+            'data_type' => 'nullable|in:string,integer,float,boolean',
             'unit' => 'nullable|string|max:255',
             'is_filterable' => 'boolean',
             'is_required' => 'boolean',

@@ -21,6 +21,10 @@ class ShippingController extends Controller
             'to.district' => 'required|string',
             'to.ward' => 'nullable|string',
             'shipping_method_id' => 'required|integer',
+            'items' => 'required|array',
+            'items.*.sku' => 'required|string',
+            'items.*.slug' => 'required|string',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
         if (empty($data['from'])) {
