@@ -22,8 +22,32 @@ return new class extends Migration
             $table->bigInteger('price');
             $table->integer('stock')->default(0);
 
+            $table->boolean('is_default')->default(false);
+            $table->float('weight')->default(0)->comment('kg');
+            $table->float('length')->nullable()->comment('cm');
+            $table->float('width')->nullable()->comment('cm');
+            $table->float('height')->nullable()->comment('cm');
+
             $table->timestamps();
         });
+
+        // Set the first variant of each product item as default
+        $productItemIds = \Illuminate\Support\Facades\DB::table('product_variants')
+            ->distinct()
+            ->pluck('product_item_id');
+
+        foreach ($productItemIds as $productItemId) {
+            $firstVariantId = \Illuminate\Support\Facades\DB::table('product_variants')
+                ->where('product_item_id', $productItemId)
+                ->orderBy('id')
+                ->value('id');
+
+            if ($firstVariantId) {
+                \Illuminate\Support\Facades\DB::table('product_variants')
+                    ->where('id', $firstVariantId)
+                    ->update(['is_default' => true]);
+            }
+        }
     }
 
     /**

@@ -22,6 +22,11 @@ return new class extends Migration
                 ->constrained()
                 ->restrictOnDelete();
 
+            $table->foreignId('product_variant_id')
+                ->nullable()
+                ->constrained('product_variants')
+                ->nullOnDelete();
+
             $table->integer('quantity');
 
             $table->timestamps();
