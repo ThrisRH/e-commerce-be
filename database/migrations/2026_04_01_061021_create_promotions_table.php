@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('promotions', function (Blueprint $table) {
@@ -17,7 +14,7 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             $table->string('type');
-            $table->string('strategy_key')->nullable(); // E.g., 'default', 'black_friday', 'flash_sale'
+            $table->string('strategy_key')->nullable(); // 'default', 'black_friday', 'flash_sale'
             $table->decimal('value', 10, 2)->nullable();
 
             $table->decimal('max_discount', 10, 2)->nullable();
