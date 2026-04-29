@@ -1,7 +1,5 @@
 <?php
 
-// /Users/tri/tlegoworld/app/Containers/CatalogSection/Brand/Actions/CreateBrandAction.php
-
 namespace App\Containers\CatalogSection\Brand\Actions;
 
 use App\Containers\CatalogSection\Brand\Tasks\CheckBrandExistTask;

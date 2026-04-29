@@ -10,7 +10,6 @@ Route::prefix('api/v1/products')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/by-cate', [ProductController::class, 'showByCate']);
     Route::get('/search', [ProductController::class, 'findProductByKeyword']);
-    // Route::get('/{id}', [ProductController::class, 'show']);
     Route::get('/{slug}', [ProductController::class, 'getProductBySlug']);
 
     Route::middleware(['auth:api', 'role:super-admin|p-manager'])->group(function () {

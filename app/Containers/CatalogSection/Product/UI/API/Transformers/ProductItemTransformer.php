@@ -65,7 +65,8 @@ class ProductItemTransformer
                 ];
             }),
 
-            'updated_at' => optional($productItem->updated_at)->format('Y-m-d'),
+            'created_at' => optional($productItem->created_at)->format('d-m-Y'),
+            'updated_at' => optional($productItem->updated_at)->format('d-m-Y'),
         ];
     }
 }
